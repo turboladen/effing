@@ -1,22 +1,30 @@
 require './lib/vanagon/file_reader'
 require './lib/vanagon/raw_video_file'
 
+require './lib/vanagon/decoder'
 
 #Vanagon.log = true
-=begin
-reader = Vanagon::FileReader.new(ARGV.first)
-reader.dump_format
+#reader = Vanagon::FileReader.new(ARGV.first)
+#reader.dump_format
 
-video_stream = reader.streams.find { |stream| stream.type == :video }
-abort "No video stream found" unless video_stream
-pp video_stream
+#video_stream = reader.streams.find { |stream| stream.type == :video }
+#abort "No video stream found" unless video_stream
+#pp video_stream
+
+#video_dst_file = Vanagon::RawVideoFile.new('raw_video',
+#  video_stream.width,
+#  video_stream.height,
+#  video_stream.pixel_format)
+
+decoder = Vanagon::Decoder.new(ARGV.first, :video)
+#video_stream.each_frame do |frame|
 
 video_dst_file = Vanagon::RawVideoFile.new('raw_video',
-  video_stream.width,
-  video_stream.height,
-  video_stream.pixel_format)
+  decoder.stream.width,
+  decoder.stream.height,
+  decoder.stream.pixel_format)
 
-video_stream.each_frame do |frame|
+decoder.each_frame do |frame|
   puts "frame pict type: #{frame.av_frame[:pict_type]}"
   puts "frame format: #{frame.av_frame[:format]}"
   puts "frame width: #{frame.av_frame[:width]}"
@@ -33,16 +41,20 @@ end
 video_dst_file.close
 
 cmd = "ffplay -f rawvideo "
-cmd << "-pixel_format #{video_stream.pixel_format} "
-cmd << "-video_size #{video_stream.width}x#{video_stream.height} "
-cmd << "-t #{reader.duration} "
+#cmd << "-pixel_format #{video_stream.pixel_format} "
+cmd << "-pixel_format #{decoder.stream.pixel_format} "
+#cmd << "-video_size #{video_stream.width}x#{video_stream.height} "
+cmd << "-video_size #{decoder.stream.width}x#{decoder.stream.height} "
+#cmd << "-t #{reader.duration} "
+cmd << "-t #{decoder.reader.duration} "
 cmd << "-loglevel debug "
 cmd << "raw_video"
 puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
-=end
 
+
+=begin
 require './lib/vanagon/demuxer'
 
 demuxer = Vanagon::Demuxer.new(ARGV.first, :video)
@@ -70,3 +82,4 @@ cmd << "raw_mpeg4_video"
 puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
+=end
