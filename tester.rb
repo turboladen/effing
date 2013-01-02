@@ -3,6 +3,7 @@ require './lib/vanagon/raw_video_file'
 
 
 #Vanagon.log = true
+=begin
 reader = Vanagon::FileReader.new(ARGV.first)
 reader.dump_format
 
@@ -40,11 +41,15 @@ cmd << "raw_video"
 puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
+=end
 
-=begin
+require './lib/vanagon/demuxer'
+
+demuxer = Vanagon::Demuxer.new(ARGV.first, :video)
 video_dst_file = FFI::LibC.fopen('raw_mpeg4_video', 'wb')
 
-video_stream.each_packet do |packet|
+#video_stream.each_packet do |packet|
+demuxer.each_packet do |packet|
   unless packet[:data].null?
     FFI::LibC.fwrite(
       packet[:data],
@@ -58,10 +63,10 @@ end
 FFI::LibC.fclose(video_dst_file)
 
 cmd = "ffplay -f m4v "
-cmd << "-t #{reader.duration} "
+#cmd << "-t #{reader.duration} "
+cmd << "-t #{demuxer.duration} "
 cmd << "-loglevel debug "
 cmd << "raw_mpeg4_video"
 puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
-=end

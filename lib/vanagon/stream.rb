@@ -44,7 +44,6 @@ class Vanagon
     end
 
     def type
-      log "type #{@av_codec_context[:codec_type]}"
       @av_codec_context[:codec_type]
     end
 
@@ -99,6 +98,13 @@ class Vanagon
 
         av_free_packet(av_packet)
       end
+    end
+
+    # Video duration in (fractional) seconds.
+    #
+    # @return [Float] The format context's duration divided by AV_TIME_BASE.
+    def duration
+      @duration ||= @av_stream[:duration].to_f / AV_TIME_BASE
     end
   end
 end
