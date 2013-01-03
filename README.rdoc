@@ -1,4 +1,4 @@
-= vanagon
+= effer
 
 * FIX (url)
 

@@ -3,7 +3,7 @@ require_relative 'stream'
 require_relative 'logger'
 
 
-class Vanagon
+class Effer
   class FileReader
     include LogSwitch::Mixin
     include FFI::FFmpeg

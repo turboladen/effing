@@ -1,3 +1,3 @@
-class Vanagon
+class Effer
   # Implement me
 end

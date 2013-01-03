@@ -3,8 +3,8 @@ require_relative 'stream'
 require_relative 'video_frame'
 
 
-class Vanagon
-  class VideoStream < Vanagon::Stream
+class Effer
+  class VideoStream < Effer::Stream
     include LogSwitch::Mixin
 
     attr_reader :raw_frame, :width, :height, :pixel_format

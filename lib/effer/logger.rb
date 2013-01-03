@@ -1,8 +1,8 @@
 require 'log_switch'
 
 
-class Vanagon
+class Effer
   extend LogSwitch
 end
 
-Vanagon.log_class_name = true
+Effer.log_class_name = true

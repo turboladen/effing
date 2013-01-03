@@ -1,25 +1,27 @@
-require './lib/vanagon/file_reader'
-require './lib/vanagon/raw_video_file'
+require './lib/effer/file_reader'
+require './lib/effer/raw_video_file'
 
-require './lib/vanagon/decoder'
+require './lib/effer/decoder'
 
-#Vanagon.log = true
-#reader = Vanagon::FileReader.new(ARGV.first)
+start_time = Time.now
+=begin
+#Effer.log = true
+#reader = Effer::FileReader.new(ARGV.first)
 #reader.dump_format
 
 #video_stream = reader.streams.find { |stream| stream.type == :video }
 #abort "No video stream found" unless video_stream
 #pp video_stream
 
-#video_dst_file = Vanagon::RawVideoFile.new('raw_video',
+#video_dst_file = Effer::RawVideoFile.new('raw_video',
 #  video_stream.width,
 #  video_stream.height,
 #  video_stream.pixel_format)
 
-decoder = Vanagon::Decoder.new(ARGV.first, :video)
+decoder = Effer::Decoder.new(ARGV.first, :video)
 #video_stream.each_frame do |frame|
 
-video_dst_file = Vanagon::RawVideoFile.new('raw_video',
+video_dst_file = Effer::RawVideoFile.new('raw_video',
   decoder.stream.width,
   decoder.stream.height,
   decoder.stream.pixel_format)
@@ -40,6 +42,9 @@ end
 
 video_dst_file.close
 
+end_time = Time.now
+puts "Total decoding time: #{end_time - start_time}"
+
 cmd = "ffplay -f rawvideo "
 #cmd << "-pixel_format #{video_stream.pixel_format} "
 cmd << "-pixel_format #{decoder.stream.pixel_format} "
@@ -53,11 +58,11 @@ puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
 
+=end
 
-=begin
-require './lib/vanagon/demuxer'
+require './lib/effer/demuxer'
 
-demuxer = Vanagon::Demuxer.new(ARGV.first, :video)
+demuxer = Effer::Demuxer.new(ARGV.first, :video)
 video_dst_file = FFI::LibC.fopen('raw_mpeg4_video', 'wb')
 
 #video_stream.each_packet do |packet|
@@ -74,12 +79,14 @@ end
 
 FFI::LibC.fclose(video_dst_file)
 
+end_time = Time.now
+puts "Total demuxing time: #{end_time - start_time}"
+
 cmd = "ffplay -f m4v "
 #cmd << "-t #{reader.duration} "
-cmd << "-t #{demuxer.duration} "
+cmd << "-t #{demuxer.reader.duration} "
 cmd << "-loglevel debug "
 cmd << "raw_mpeg4_video"
 puts "Play the output video file with the command:\n#{cmd}"
 `#{cmd}`
 
-=end

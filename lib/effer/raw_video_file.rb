@@ -2,7 +2,7 @@ require_relative '../ffi/libc'
 require_relative '../ffi/ffmpeg'
 
 
-class Vanagon
+class Effer
 
   # Handles writing raw video frames to a file.
   class RawVideoFile

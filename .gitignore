@@ -13,7 +13,7 @@ doc
 
 # packaging
 pkg
-vanagon*.gem
+effer*.gem
 
 # Rubinius
 .rbx

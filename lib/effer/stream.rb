@@ -3,7 +3,7 @@ require_relative 'logger'
 require 'pp'
 
 
-class Vanagon
+class Effer
   class Stream
     include FFI::FFmpeg
     include LogSwitch::Mixin

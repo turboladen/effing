@@ -1,18 +1,18 @@
-require './lib/vanagon/version'
+require './lib/effer/version'
 
 
 Gem::Specification.new do |s| 
-  s.name = "vanagon"
-  s.version = Vanagon::VERSION
+  s.name = "effer"
+  s.version = Effer::VERSION
   s.author = "Steve Loveless"
-  s.homepage = "http://github.com/turboladen/vanagon"
+  s.homepage = "http://github.com/turboladen/effer"
   s.email = "steve.loveless@gmail.com"
   s.summary = %q(FIX)
   s.description = %q(FIX)
 
   s.required_rubygems_version = ">=1.8.0"
   s.files = Dir.glob("{lib,spec}/**/*") + Dir.glob("*.rdoc") +
-    %w(.gemtest Gemfile vanagon.gemspec Rakefile)
+    %w(.gemtest Gemfile effer.gemspec Rakefile)
   s.test_files = Dir.glob("{spec}/**/*")
   s.require_paths = ["lib"]
 

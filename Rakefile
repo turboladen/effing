@@ -1,13 +1,12 @@
 # -*- ruby -*-
 
-require 'rubygems'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'yard'
 
 YARD::Rake::YardocTask.new do |t|
   t.files = %w(lib/**/*.rb - History.rdoc)
-  t.options = %w(--title vanagon Documentation (#{Vanagon::VERSION}))
+  t.options = %w(--title effer Documentation (#{Effer::VERSION}))
   t.options += %w(--main README.rdoc)
 end
 

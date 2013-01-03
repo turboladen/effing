@@ -2,7 +2,7 @@ require_relative 'logger'
 require_relative '../ffi/ffmpeg'
 
 
-class Vanagon
+class Effer
   class VideoFrame
     include FFI::FFmpeg
     include LogSwitch::Mixin
