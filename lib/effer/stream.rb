@@ -56,7 +56,11 @@ class Effer
       raise NotImplementedError, "decode_frame() not defined for #{self.class}"
     end
 
-    def each_frame(&block)
+    # Used for decoding the stream into raw frames.
+    #
+    # @param [Proc] callback Block that gets called after all packets have been
+    #   read.
+    def each_frame(callback=nil, &frame_block)
       raise ArgumentError, "No block provided" unless block_given?
 
       av_packet = AVPacket.new
@@ -68,7 +72,8 @@ class Effer
         log "Packet from stream number #{av_packet[:stream_index]}"
 
         if av_packet[:stream_index] == index
-          frame = decode_frame(av_packet)
+          #frame = decode_frame(av_packet)
+          frame = frame_block.call(decode_frame(av_packet)) unless av_packet.null?
           rc = frame ? yield(frame) : true
         end
 
@@ -76,12 +81,17 @@ class Effer
 
         break if rc == false
       end
+
+      callback.call if callback
     end
 
     # Use for demuxing the stream without decoding it.  It yields each packet
     # as it is read.  The only difference between this and #each_frame is that
     # #each_frame decodes each packet and yields frames held in the packet.
-    def each_packet(&block)
+    #
+    # @param [Proc] callback Block that gets called after all packets have been
+    #   read.
+    def each_packet(callback=nil, &packet_block )
       raise ArgumentError, "No block provided" unless block_given?
 
       av_packet = AVPacket.new
@@ -93,11 +103,14 @@ class Effer
         log "Packet from stream number #{av_packet[:stream_index]}"
 
         if av_packet[:stream_index] == index
-          yield(av_packet) unless av_packet.null?
+          #yield(av_packet) unless av_packet.null?
+          packet_block.call(av_packet) unless av_packet.null?
         end
 
         av_free_packet(av_packet)
       end
+
+      callback.call if callback
     end
 
     # Video duration in (fractional) seconds.
