@@ -254,6 +254,9 @@ module FFI
               :rc_lookahead, :int
 =end
       # LONGEST STRUCTURE EVER!!!!
+      def time_base
+        self[:time_base].to_f
+      end
     end
   end
 end
