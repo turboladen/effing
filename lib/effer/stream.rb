@@ -8,8 +8,14 @@ class Effer
     include FFI::FFmpeg
     include LogSwitch::Mixin
 
-    attr_reader :av_stream, :av_codec_context
+    # @return [FFI::FFmpeg::AVStream]
+    attr_reader :av_stream
 
+    # @return [FFI::FFmpeg::AVCodecContext]
+    attr_reader :av_codec_context
+
+    # @param [FFI::FFmpeg::AVStream] av_stream
+    # @param [FFI::FFmpeg::AVFormatContext] av_format_context
     def initialize(av_stream, av_format_context)
       @av_stream = av_stream
       @av_format_context = av_format_context
@@ -31,24 +37,66 @@ class Effer
       ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
     end
 
-    def self.finalize(id)
-      avcodec_close(@av_codec_context)
-    end
-
+    # Use to set the types of frames to discard when demuxing. Refer to
+    # http://ffmpeg.org/doxygen/trunk/group__lavc__decoding.html#ga352363bce7d3ed82c101b3bc001d1c16.
+    #
+    # Options are:
+    #   * :none
+    #   * :default
+    #   * :nonref
+    #   * :bidir
+    #   * :nonkey
+    #   * :all
     def discard=(value)
       @av_stream[:discard] = value
     end
 
+    # Shows which packets will be discarded (and won't be demuxed).
+    #
+    # @return [Symbol]
     def discard
       @av_stream[:discard]
     end
 
+    # The elemental A/V type of stream (i.e. audio, video, etc.).
+    #
+    # @return [Stream]
     def type
       @av_codec_context[:codec_type]
     end
 
+    # The long name for the codec (i.e. '3vix D4 4.5.1').
+    #
+    # @return [String]
+    def codec_name
+      @av_stream.codec[:codec_name]
+    end
+
+    # The general type of codec (i.e. mpeg4).
+    #
+    # @return [Synbol]
+    def codec_id
+      @av_stream.codec[:codec_id]
+    end
+
+    # Position in the file in which the stream exists.
     def index
       @av_stream[:index]
+    end
+
+    # Average bit rate for the stream (if set).
+    #
+    # @return [Fixnum]
+    def bit_rate
+      @av_stream.bit_rate
+    end
+
+    # This is the fundamental unit of time (in seconds) in terms of which frame
+    # timestamps are represented.
+    #
+    # @return [Float]
+    def time_base
+      @av_codec_context.time_base
     end
 
     def decode_frame(packet)
@@ -118,6 +166,12 @@ class Effer
     # @return [Float] The format context's duration divided by AV_TIME_BASE.
     def duration
       @duration ||= @av_stream[:duration].to_f / AV_TIME_BASE
+    end
+
+    private
+
+    def self.finalize(id)
+      avcodec_close(@av_codec_context)
     end
   end
 end
