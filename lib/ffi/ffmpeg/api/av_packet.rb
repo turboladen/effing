@@ -6,7 +6,7 @@ module FFI
     class SideData < FFI::Struct
       layout :data, :pointer,
              :size, :int,
-             :type, AVPacketSideDataType      # TODO enum AVPacketSideDatatype
+             :type, AVPacketSideDataType
     end
 
     class AVPacket < FFI::Struct
