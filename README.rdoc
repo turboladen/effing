@@ -70,8 +70,9 @@ instead of #each_packet.
 
 == REQUIREMENTS:
 
-* Rubies
+* Rubies (tested)
   * MRI 1.9.3
+  * JRuby 1.7.1
 * RubyGems
   * ffi
 * Other
