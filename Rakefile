@@ -6,7 +6,7 @@ require 'yard'
 
 YARD::Rake::YardocTask.new do |t|
   t.files = %w(lib/**/*.rb - History.rdoc)
-  t.options = %w(--title effer Documentation (#{Effer::VERSION}))
+  t.options = %w(--title effing Documentation (#{Effing::VERSION}))
   t.options += %w(--main README.rdoc)
 end
 

@@ -1,18 +1,18 @@
-require './lib/effer/version'
+require './lib/effing/version'
 
 
 Gem::Specification.new do |s| 
-  s.name = "effer"
-  s.version = Effer::VERSION
+  s.name = "effing"
+  s.version = Effing::VERSION
   s.author = "Steve Loveless"
-  s.homepage = "http://github.com/turboladen/effer"
+  s.homepage = "http://github.com/turboladen/effing"
   s.email = "steve.loveless@gmail.com"
   s.summary = %q(FIX)
   s.description = %q(FIX)
 
   s.required_rubygems_version = ">=1.8.0"
   s.files = Dir.glob("{lib,spec}/**/*") + Dir.glob("*.rdoc") +
-    %w(.gemtest Gemfile effer.gemspec Rakefile)
+    %w(.gemtest Gemfile effing.gemspec Rakefile)
   s.test_files = Dir.glob("{spec}/**/*")
   s.require_paths = ["lib"]
 

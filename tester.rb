@@ -1,27 +1,27 @@
-require './lib/effer/file_reader'
-require './lib/effer/raw_video_file'
+require './lib/effing/file_reader'
+require './lib/effing/raw_video_file'
 
-require './lib/effer/decoder'
+require './lib/effing/decoder'
 
 start_time = Time.now
 =begin
-#Effer.log = true
-#reader = Effer::FileReader.new(ARGV.first)
+#Effing.log = true
+#reader = Effing::FileReader.new(ARGV.first)
 #reader.dump_format
 
 #video_stream = reader.streams.find { |stream| stream.type == :video }
 #abort "No video stream found" unless video_stream
 #pp video_stream
 
-#video_dst_file = Effer::RawVideoFile.new('raw_video',
+#video_dst_file = Effing::RawVideoFile.new('raw_video',
 #  video_stream.width,
 #  video_stream.height,
 #  video_stream.pixel_format)
 
-decoder = Effer::Decoder.new(ARGV.first, :video)
+decoder = Effing::Decoder.new(ARGV.first, :video)
 #video_stream.each_frame do |frame|
 
-video_dst_file = Effer::RawVideoFile.new('raw_video',
+video_dst_file = Effing::RawVideoFile.new('raw_video',
   decoder.stream.width,
   decoder.stream.height,
   decoder.stream.pixel_format)
@@ -60,9 +60,9 @@ puts "Play the output video file with the command:\n#{cmd}"
 
 =end
 
-require './lib/effer/demuxer'
+require './lib/effing/demuxer'
 
-demuxer = Effer::Demuxer.new(ARGV.first, :video)
+demuxer = Effing::Demuxer.new(ARGV.first, :video)
 video_dst_file = FFI::LibC.fopen('raw_mpeg4_video', 'wb')
 
 #video_stream.each_packet do |packet|
