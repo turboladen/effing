@@ -40,8 +40,8 @@ module FFI
               :metadata, :pointer,
               :avg_frame_rate, AVRational,
               :attached_pic, AVPacket,      # new!
-              #:info, Info,           # new!
-              :info, :pointer,           # new!
+              :info, Info,           # new!
+              #:info, :pointer,           # new!
               :pts_wrap_bits, :int,
               :reference_dts, :int64,
               :first_dts, :int64,
