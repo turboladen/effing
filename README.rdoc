@@ -8,6 +8,10 @@ Effing is a little Ruby wrapper around ffmpeg using ffi.  It's not indended to
 be a full ffmpeg wrapper--just enough to do muxing/demuxing and
 encoding/decoding so that other libraries can handle the input/output.
 
+If you're looking for a more full-featured FFI & FFmpeg, take a look at
+the ffi-ffmpeg gem; source here: https://bitbucket.org/dmlary/ffi-ffmpeg.
+Exploring that code base helped immensely with developing this one.  
+
 == FEATURES/PROBLEMS:
 
 * Demux video from a file
