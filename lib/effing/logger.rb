@@ -1,8 +1,8 @@
 require 'log_switch'
 
 
-class Effer
+class Effing
   extend LogSwitch
 end
 
-Effer.log_class_name = true
+Effing.log_class_name = true

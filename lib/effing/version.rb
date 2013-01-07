@@ -1,3 +1,3 @@
-class Effer
+class Effing
   VERSION = '0.1.0'
 end

@@ -1,12 +1,12 @@
 require_relative 'file_reader'
 
 
-class Effer
+class Effing
 
   # A decoder that demuxes then decodes (to raw audio or video) a single stream.
   class Decoder
 
-    # @return [Effer::Stream] The stream that will be decoded.
+    # @return [Effing::Stream] The stream that will be decoded.
     attr_reader :stream
 
     attr_reader :reader
@@ -17,7 +17,7 @@ class Effer
     #   stream found of that type will be used) or a number that corresponds to
     #   the stream index of the stream to deocde.
     def initialize(file_name, stream)
-      @reader = Effer::FileReader.new(file_name)
+      @reader = Effing::FileReader.new(file_name)
       @stream = find_stream(stream)
     end
 
@@ -31,7 +31,7 @@ class Effer
     # Allows for finding a stream in the file using Symbols or Fixnums.
     #
     # @param [Symbol,Fixnum] stream_id The stream to look for.
-    # @return [Effer::Stream] The audio or video stream that corresponds to
+    # @return [Effing::Stream] The audio or video stream that corresponds to
     #   the given stream_id.
     def find_stream(stream_id)
       @reader.dump_format

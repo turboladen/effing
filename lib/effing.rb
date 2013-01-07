@@ -1,3 +1,3 @@
-class Effer
+class Effing
   # Implement me
 end

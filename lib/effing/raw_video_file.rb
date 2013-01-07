@@ -2,7 +2,7 @@ require_relative '../ffi/libc'
 require_relative '../ffi/ffmpeg'
 
 
-class Effer
+class Effing
 
   # Handles writing raw video frames to a file.
   class RawVideoFile

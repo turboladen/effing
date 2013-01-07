@@ -3,7 +3,7 @@ require_relative 'stream'
 require_relative 'logger'
 
 
-class Effer
+class Effing
   class FileReader
     include LogSwitch::Mixin
     include FFI::FFmpeg

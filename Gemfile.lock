@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    effer (0.1.0)
+    effing (0.1.0)
       ffi (>= 1.2.0)
 
 GEM
@@ -30,7 +30,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (>= 1.0.1)
-  effer!
+  effing!
   rake
   rspec (>= 2.6.0)
   simplecov

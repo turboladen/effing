@@ -3,8 +3,8 @@ require_relative 'stream'
 require_relative 'video_frame'
 
 
-class Effer
-  class VideoStream < Effer::Stream
+class Effing
+  class VideoStream < Effing::Stream
     include LogSwitch::Mixin
 
     attr_reader :raw_frame, :width, :height, :pixel_format
