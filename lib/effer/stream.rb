@@ -91,6 +91,10 @@ class Effer
       @av_stream.bit_rate
     end
 
+    def frame_rate
+      1 / time_base
+    end
+
     # This is the fundamental unit of time (in seconds) in terms of which frame
     # timestamps are represented.
     #
@@ -117,8 +121,6 @@ class Effer
       av_packet[:size] = 0
 
       while av_read_frame(@av_format_context, av_packet) >= 0
-        log "Packet from stream number #{av_packet[:stream_index]}"
-
         if av_packet[:stream_index] == index
           #frame = decode_frame(av_packet)
           frame = frame_block.call(decode_frame(av_packet)) unless av_packet.null?
@@ -148,8 +150,6 @@ class Effer
       av_packet[:size] = 0
 
       while av_read_frame(@av_format_context, av_packet) >= 0
-        log "Packet from stream number #{av_packet[:stream_index]}"
-
         if av_packet[:stream_index] == index
           #yield(av_packet) unless av_packet.null?
           packet_block.call(av_packet) unless av_packet.null?
