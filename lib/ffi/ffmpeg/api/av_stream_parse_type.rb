@@ -5,6 +5,6 @@ module FFI
                              :headers,
                              :timestamps,
                              :full_once,
-                             :full_raw, "RAW"
+                             :full_raw
   end
 end

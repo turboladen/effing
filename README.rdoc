@@ -64,6 +64,10 @@ you can pass in a callback that will get called when all of that is done.
     writer.write(data)
   end
 
+Decoding is almost exactly the same; just call #each_frame on the stream
+instead of #each_packet.
+
+
 == REQUIREMENTS:
 
 * Rubies
