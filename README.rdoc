@@ -1,41 +1,93 @@
 = effing
 
-* FIX (url)
+* https://github.com/turboladen/effing
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Effing is a little Ruby wrapper around ffmpeg using ffi.  It's not indended to
+be a full ffmpeg wrapper--just enough to do muxing/demuxing and
+encoding/decoding so that other libraries can handle the input/output.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Demux video from a file
+* Decode video from a file
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+Demultiplex the video stream from a file to another file:
+
+  my_movie = 'neat.mov'
+  my_mpeg4_video_file = 'neat_raw_mpeg4'
+
+  # The FileReader uses FFmpeg to learn about the contents of the file
+  reader = Effing::FileReader.new(my_movie)
+  writer = File.open(my_mpeg4_video_file, 'wb')
+
+  # Find the first video stream
+  video_stream = reader.streams.find { |stream| stream.type == :video }
+
+  # ...or find the same stream using its index
+  video_stream = reader.streams.find { |stream| stream.index == 0 }
+
+  # Output some info about the stream
+  puts "Codec ID: #{video_stream.codec_id}"
+  puts "Codec name: #{video_stream.codec_name}"
+  puts "Stream bitrate: #{video_stream.av_stream.bit_rate}"
+  puts "Stream time base: #{video_stream.time_base}"
+  puts "Stream frame rate: #{video_stream.frame_rate}"
+
+  # Get each encoded packet from the stream.
+  #
+  # Note that each av_packet is an FFmpeg AVPacket structure, wrapped in some
+  # FFI goodness.  You have to, thus, read the data from the structure. The
+  # data from these packets is the video VOP/frame data.
+  video_stream.each_packet do |av_packet|
+    data = av_packet[:data]
+    puts "Got packet with data size #{data.size}"
+    writer.write(data)
+  end
+
+  # Play the raw file back
+  `ffplay -f m4v #{my_mpeg4_video_file}`
+
+If you want to know when all packets have been read and yielded to your block,
+you can pass in a callback that will get called when all of that is done.
+
+  callback = proc do
+    puts "All done reading!"
+  end
+
+  video_stream.each_packet(callback) do |av_packet|
+    data = av_packet[:data]
+    puts "Got packet with data size #{data.size}"
+    writer.write(data)
+  end
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Rubies
+  * MRI 1.9.3
+* RubyGems
+  * ffi
+* Other
+  * ffmpeg
+
+I've been testing with ffmpeg 1.0.1, but intend to support older versions 
+as well.
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* git clone http://github.com/turboladen/effing
+* bundle install
+* rake install
 
-== DEVELOPERS:
-
-After checking out the source, run:
-
-  $ rake newb
-
-This task will install any missing dependencies, run the tests/specs,
-and generate the RDoc.
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2013 FIX
+Copyright (c) 2013 Steve Loveless
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
