@@ -56,7 +56,7 @@ Demultiplex the video stream from a file to another file:
   `ffplay -f m4v #{my_mpeg4_video_file}`
 
 If you want to know when all packets have been read and yielded to your block,
-you can pass in a callback that will get called when all of that is done.
+you can pass in a callback that will get <tt>call</tt>ed when all of that is done.
 
   callback = proc do
     puts "All done reading!"
