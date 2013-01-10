@@ -23,9 +23,9 @@ module FFI
       :avcodec  => ENV['FFI_FFMPEG_LIBAVCODEC'],
     }
 
-    LIBRARY_FILENAME[:avutil]   ||= "libavutil"
-    LIBRARY_FILENAME[:avformat] ||= "libavformat"
-    LIBRARY_FILENAME[:avcodec]  ||= "libavcodec"
+    LIBRARY_FILENAME[:avutil]   ||= %w[libavutil libavutil.so.51]
+    LIBRARY_FILENAME[:avformat] ||= %w[libavformat libavformat.so.54 libavformat.so.53]
+    LIBRARY_FILENAME[:avcodec]  ||= %w[libavcodec libavcodec.so.54 libavcodec.so.53]
 
 
     # Not actually an enum in libavutil.h, but we make it one here to
