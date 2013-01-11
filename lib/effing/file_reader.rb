@@ -15,8 +15,8 @@ class Effing
       @filename = filename
       @streams = []
 
-      av_register_all
-      av_log_set_level(:debug)
+      FFI::FFmpeg.av_register_all
+      FFI::FFmpeg.av_log_set_level(:debug)
 
       if @filename && File.exists?(@filename)
         open_file(@filename)
@@ -31,15 +31,13 @@ class Effing
       initialize_streams(p)
     end
 
-    # Opens the A/V file using FFmpeg.
+    # Opens the A/V file using FFmpeg.avformat_open_input.
     #
     # @param [String] filename Name/path of the A/V file to read.
     # @raise [RuntimeError] If FFmpeg wasn't able to open the file.
     def open_file(filename)
-
       @av_format_context = FFI::MemoryPointer.new(:pointer)
-      #rc = av_open_input_file(@av_format_context, @filename, nil, 0, nil)
-      return_code = avformat_open_input(@av_format_context, filename, nil, 0, nil)
+      return_code = FFI::FFmpeg.avformat_open_input(@av_format_context, filename, nil, 0, nil)
 
       unless return_code.zero?
         raise RuntimeError,
@@ -47,14 +45,15 @@ class Effing
           [filename, return_code]
       end
 
-      @av_format_context = AVFormatContext.new(@av_format_context.get_pointer(0))
+      @av_format_context =
+        FFI::FFmpeg::AVFormatContext.new(@av_format_context.get_pointer(0))
     end
 
     # Gets info about the streams in the file.
     #
     # @raise [RuntimeError] If FFmpeg wasn't able to find stream info.
     def find_stream_info
-      return_code = av_find_stream_info(@av_format_context)
+      return_code = FFI::FFmpeg.av_find_stream_info(@av_format_context)
 
       if return_code < 0
         raise RuntimeError,
@@ -92,14 +91,17 @@ class Effing
     end
 
     def self.finalize(id)
-      avformat_close_input(@av_format_context)
+      unless @av_format_context.nil?
+        FFI::FFmpeg.avformat_close_input(@av_format_context)
+      end
     end
 
     private
 
     def initialize_streams(p={})
       @av_format_context[:nb_streams].times do |i|
-        av_stream = AVStream.new(@av_format_context[:streams][i].get_pointer(0))
+        av_stream =
+          FFI::FFmpeg::AVStream.new(@av_format_context[:streams][i].get_pointer(0))
 
         log "Stream #{i} info:"
         log "Codec type: #{av_stream.codec_type}"
