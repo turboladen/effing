@@ -42,7 +42,8 @@ class Effing
       return_code = avformat_open_input(@av_format_context, filename, nil, 0, nil)
 
       unless return_code.zero?
-        raise RuntimeError, "av_open_input_file() failed, filename='%s', rc=%d" %
+        raise RuntimeError,
+          "FFI::FFmpeg.av_open_input_file() failed, filename='%s', rc=%d" %
           [filename, return_code]
       end
 
@@ -56,7 +57,8 @@ class Effing
       return_code = av_find_stream_info(@av_format_context)
 
       if return_code < 0
-        raise RuntimeError, "av_find_stream_info() failed, rc=#{return_code}"
+        raise RuntimeError,
+          "FFI::Ffmpeg.av_find_stream_info() failed, rc=#{return_code}"
       end
 
       log "Stream count: #{@av_format_context[:nb_streams]}"

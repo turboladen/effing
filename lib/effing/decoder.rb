@@ -1,4 +1,5 @@
 require_relative 'file_reader'
+require_relative 'error'
 
 
 class Effing
@@ -9,6 +10,7 @@ class Effing
     # @return [Effing::Stream] The stream that will be decoded.
     attr_reader :stream
 
+    # @return [Effing::FileReader]
     attr_reader :reader
 
     # @param [String] file_name Name/path of the file to decode.
@@ -38,8 +40,10 @@ class Effing
 
       if stream_id.is_a? Symbol
         @reader.streams.find { |stream| stream.type == stream_id }
-      elsif stream_id.to_i
-        @reader.streams.find { |stream| stream.index == stream_id.to_i }
+      elsif stream_id.is_a? Fixnum
+        @reader.streams.find { |stream| stream.index == stream_id }
+      else
+        raise Effing::Error, "Stream can only be found using a Symbol or Fixnum"
       end
     end
   end

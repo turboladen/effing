@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "ffi", ">= 1.2.0"
+  s.add_dependency "log_switch", ">= 0.4.0"
 
   s.add_development_dependency "bundler", ">= 1.0.1"
   s.add_development_dependency "rake"
