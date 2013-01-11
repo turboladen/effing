@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'effing/decoder'
+require 'effing/stream_reader'
 
 
-describe Effing::Decoder do
+describe Effing::StreamReader do
   let(:stream) do
     s = double "@stream"
     s.stub(:index)
@@ -10,7 +10,7 @@ describe Effing::Decoder do
     s
   end
 
-  let(:reader) do
+  let(:file_reader) do
     r = double "Effing::FileReader"
     r.stub :dump_format
 
@@ -18,39 +18,53 @@ describe Effing::Decoder do
   end
 
   subject do
-    Effing::FileReader.stub(:new).and_return reader
-    Effing::Decoder.new('some_file', 0)
+    Effing::FileReader.stub(:new).and_return file_reader
+    Effing::StreamReader.new('some_file', 0)
   end
 
   describe "#initialize" do
     before do
-      Effing::Decoder.any_instance.stub(:find_stream).and_return stream
+      Effing::StreamReader.any_instance.stub(:find_stream).and_return stream
     end
 
     it "creates a FileReader and finds the stream info" do
       Effing::FileReader.should_receive(:new)
-      Effing::Decoder.any_instance.should_receive(:find_stream)
-      Effing::Decoder.new('some_file', 0)
+      Effing::StreamReader.any_instance.should_receive(:find_stream)
+      Effing::StreamReader.new('some_file', 0)
     end
   end
 
-  describe "#each_frame" do
+  describe "#decode" do
     before do
-      Effing::Decoder.any_instance.stub(:find_stream)
+      Effing::StreamReader.any_instance.stub(:find_stream)
       subject.instance_variable_set(:@stream, stream)
     end
 
     it "passes the block on to the #each_frome method of the stream" do
       expect { |b|
         stream.should_receive(:each_frame).with &b
-        subject.each_frame(&b)
+        subject.decode(&b)
+      }.to yield_control
+    end
+  end
+
+  describe "#demux" do
+    before do
+      Effing::StreamReader.any_instance.stub(:find_stream)
+      subject.instance_variable_set(:@stream, stream)
+    end
+
+    it "passes the block on to the #each_packet method of the stream" do
+      expect { |b|
+        stream.should_receive(:each_packet).with &b
+        subject.demux(&b)
       }.to yield_control
     end
   end
 
   describe "#find_stream" do
     before do
-      reader.stub(:streams).and_return streams
+      file_reader.stub(:streams).and_return streams
     end
 
     context "the param is a Symbol" do
