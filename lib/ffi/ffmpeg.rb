@@ -5,18 +5,6 @@ module FFI
   module FFmpeg
     extend FFI::Library
 
-    def self.old_api
-      @old_api ||= false
-    end
-
-    def self.old_api?
-      !!@old_api
-    end
-
-    def self.old_api=(new_value)
-      @old_api = new_value
-    end
-
     LIBRARY_FILENAME = {
       :avutil   => ENV['FFI_FFMPEG_LIBAVUTIL'],
       :avformat => ENV['FFI_FFMPEG_LIBAVFORMAT'],
@@ -27,6 +15,11 @@ module FFI
     LIBRARY_FILENAME[:avformat] ||= %w[libavformat libavformat.so.54 libavformat.so.53]
     LIBRARY_FILENAME[:avcodec]  ||= %w[libavcodec libavcodec.so.54 libavcodec.so.53]
 
+
+    ###################################################
+    #  Functions                                      #
+    ###################################################
+    @@old_api = false
 
     # Not actually an enum in libavutil.h, but we make it one here to
     # make the api prettier.
@@ -39,27 +32,6 @@ module FFI
       :verbose, 40,
       :debug,   48
 
-
-    ###################################################
-    #                                                 #
-    #  Enums                                          #
-    #                                                 #
-    ###################################################
-    require_relative 'ffmpeg/api/av_media_type'
-    require_relative 'ffmpeg/api/av_codec_id'
-
-    if old_api?
-      require_relative 'ffmpeg/old_api/pixel_format'
-    else
-      require_relative 'ffmpeg/api/av_pixel_format'
-    end
-
-    ###################################################
-    #                                                 #
-    #  Functions                                      #
-    #                                                 #
-    ###################################################
-
     #--------------------------------------------------
     # libavutil
     #--------------------------------------------------
@@ -69,6 +41,7 @@ module FFI
     attach_function :av_malloc, [:uint], :pointer
     attach_function :av_free, [:pointer], :void
     attach_function :av_freep, [:pointer], :void
+    attach_function :avutil_version, [], :uint
 
     #--------------------------------------------------
     # libavformat
@@ -85,7 +58,7 @@ module FFI
         :void
     rescue
       warn "Using old FFmpeg API; using av_open_input_file instead of avformat_open_input"
-      old_api = true
+       @@old_api = true
       attach_function :av_open_input_file,
         [:pointer, :string, :pointer, :int, :pointer],
         :int
@@ -99,13 +72,14 @@ module FFI
     attach_function :av_seek_frame, [:pointer, :int, :long_long, :int], :int
     attach_function :av_find_default_stream_index, [ :pointer ], :int
     attach_function :avformat_close_input, [:pointer], :void
+    attach_function :avformat_version, [], :uint
 
     attach_function :av_image_alloc,
       [:pointer, :pointer, :int, :int, :int, :int], :int
     attach_function :av_image_copy,
       [:pointer, :pointer, :pointer, :pointer, :int, :int, :int], :void
 
-    if old_api?
+    if @@old_api
       # This function is inlined in avformat, defining it here
       # for convenience.
       #
@@ -127,10 +101,6 @@ module FFI
       attach_function :av_free_packet, [:pointer], :void
     end
 
-    def av_free_packet(pkt)
-      FFI::FFmpeg.av_free_packet(pkt)
-    end
-
     #--------------------------------------------------
     # libavcodec
     #--------------------------------------------------
@@ -140,12 +110,13 @@ module FFI
     attach_function :avcodec_open2, [:pointer, :pointer, :pointer], :int
     attach_function :avcodec_alloc_frame, [], :pointer
     attach_function :av_init_packet, [:pointer], :void
+    attach_function :avcodec_version, [], :uint
 
-    if old_api?
+    if @@old_api
+      warn "Using old API avcodec_decode_video()"
       attach_function :avcodec_decode_video, [:pointer, :pointer, :pointer,
         :pointer, :int], :int,
         { :blocking => true }
-
     else
       attach_function :avcodec_decode_video2,
         [:pointer, :pointer, :pointer, :pointer],
@@ -159,12 +130,25 @@ module FFI
     MAX_STREAMS          = 20
     MAX_REORDER_DELAY    = 16
     AV_TIME_BASE         = 1000000
-    AV_NUM_DATA_POINTERS = old_api? ? 4 : 8
+    AV_NUM_DATA_POINTERS = @@old_api ? 4 : 8
+
+    ###################################################
+    #  Enums                                          #
+    ###################################################
+    require_relative 'ffmpeg/api/av_media_type'
+    require_relative 'ffmpeg/api/av_codec_id'
+
+    if @@old_api
+      warn "Using old API pixel_format"
+      require_relative 'ffmpeg/old_api/pixel_format'
+    else
+      require_relative 'ffmpeg/api/av_pixel_format'
+    end
 
     ###################################################
     #  Data Structures                                #
     ###################################################
-    if old_api?
+    if @@old_api
       warn "Using old API av_packet"
       warn "Using old API av_stream"
       warn "Using old API av_format_context"
@@ -184,5 +168,85 @@ module FFI
       require_relative 'ffmpeg/api/av_format_context'
       require_relative 'ffmpeg/api/av_frame'
     end
+
+    def old_api?
+      @@old_api
+    end
+
+    @@loaded_libraries = ffi_libraries
+    def loaded_libraries
+      @@loaded_libraries.map { |lib| lib.name }
+    end
+
+    def av_free_packet(pkt)
+      FFI::FFmpeg.av_free_packet(pkt)
+    end
+
+    # The version of libavutil that was loaded.
+    #
+    # @return [Hash] :major, :minor, :micro versions.
+    def libavutil_version
+      return @libavutil_version if @libavutil_version
+
+      version = avutil_version
+      major = version >> 16
+      minor = version >> 8 & 0b11111111
+      micro = version & 0b11111111
+
+      @libavutil_version = {
+        major: major,
+        minor: minor,
+        micro: micro
+      }
+    end
+
+    def libavutil_old_api?
+      libavutil_version[:major] < 52
+    end
+
+    # The version of libavformat that was loaded.
+    #
+    # @return [Hash] :major, :minor, :micro versions.
+    def libavformat_version
+      return @libavformat_version if @libavformat_version
+
+      version = avformat_version
+      major = version >> 16
+      minor = version >> 8 & 0b11111111
+      micro = version & 0b11111111
+
+      @libavformat_version = {
+        major: major,
+        minor: minor,
+        micro: micro
+      }
+    end
+
+    def libavformat_old_api?
+      libavformat_version[:major] < 55
+    end
+
+    # The version of libavcodec that was loaded.
+    #
+    # @return [Hash] :major, :minor, :micro versions.
+    def libavcodec_version
+      return @libavcodec_version if @libavcodec_version
+
+      version = avcodec_version
+      major = version >> 16
+      minor = version >> 8 & 0b11111111
+      micro = version & 0b11111111
+
+      @libavcodec_version = {
+        major: major,
+        minor: minor,
+        micro: micro
+      }
+    end
+
+    def libavcodec_old_api?
+      libavcodec_version[:major] < 55
+    end
+
   end # module FFmpeg
 end # module FFI

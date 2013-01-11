@@ -16,7 +16,7 @@ class Effing
       @streams = []
 
       FFI::FFmpeg.av_register_all
-      FFI::FFmpeg.av_log_set_level(:debug)
+      FFI::FFmpeg.av_log_set_level(:debug) if Effing.log?
 
       if @filename && File.exists?(@filename)
         open_file(@filename)
@@ -76,7 +76,7 @@ class Effing
     # Wrapper for FFmpeg's .av_dump_format, outputting metadata about the file's
     # streams.
     def dump_format
-      if FFI::FFmpeg.old_api?
+      if old_api?
         FFI::FFmpeg.dump_format(@av_format_context, 0, @filename, 0)
       else
         FFI::FFmpeg.av_dump_format(@av_format_context, 0, @filename, 0)
@@ -101,21 +101,21 @@ class Effing
     def initialize_streams(p={})
       @av_format_context[:nb_streams].times do |i|
         av_stream =
-          FFI::FFmpeg::AVStream.new(@av_format_context[:streams][i].get_pointer(0))
+          FFI::FFmpeg::AVStream.new(@av_format_context[:streams][i].read_pointer)
 
         log "Stream #{i} info:"
         log "Codec type: #{av_stream.codec_type}"
 
-        @streams << case av_stream.codec_type
+        case av_stream.codec_type
         when :video
           log "Video stream"
-          VideoStream.new(av_stream, @av_format_context)
+          @streams << VideoStream.new(av_stream, @av_format_context)
+          # TODO: fix for 2nd stream
+          break
         else
-          abort "Unsupported stream type"
+          warn "Unsupported stream type: #{av_stream.codec_type}"
         end
 
-        # TODO: fix for 2nd stream
-        break
       end
     end
   end

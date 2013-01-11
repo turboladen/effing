@@ -41,12 +41,14 @@ class Effing
     # @return [Effing::Stream] The audio or video stream that corresponds to
     #   the given stream_id.
     def find_stream(stream_id)
-      @file_reader.dump_format
+      @file_reader.dump_format if Effing.log?
 
       if stream_id.is_a? Symbol
         @file_reader.streams.find { |stream| stream.type == stream_id }
       elsif stream_id.to_i
         @file_reader.streams.find { |stream| stream.index == stream_id.to_i }
+      else
+        raise "No stream found matching stream_id: #{stream_id}"
       end
     end
   end
