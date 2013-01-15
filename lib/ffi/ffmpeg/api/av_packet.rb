@@ -16,7 +16,7 @@ module FFI
               :size, :int,
               :stream_index, :int,
               :flags, :int,
-              :side_data, SideData,
+              :side_data, SideData.ptr,
               :side_data_elems, :int,
               :duration, :int,
               :destruct, :pointer,
