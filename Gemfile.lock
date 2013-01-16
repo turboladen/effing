@@ -9,6 +9,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.3)
+    fakefs (0.4.2)
     ffi (1.3.1)
     ffi (1.3.1-java)
     log_switch (0.4.0)
@@ -35,6 +36,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (>= 1.0.1)
   effing!
+  fakefs
   rake
   rspec (>= 2.6.0)
   simplecov

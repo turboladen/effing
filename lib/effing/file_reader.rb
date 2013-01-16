@@ -27,7 +27,6 @@ class Effing
       end
 
       find_stream_info
-
       initialize_streams
     end
 
