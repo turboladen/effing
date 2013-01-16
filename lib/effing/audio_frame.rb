@@ -10,12 +10,9 @@ class Effing
     attr_reader :av_frame
 
     def initialize
+      @av_frame = nil
       init_frame
-      ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
-    end
-
-    def self.finalize(id)
-      av_free(@av_frame)
+      ObjectSpace.define_finalizer(self, method(:finalize).to_proc)
     end
 
     def key_frame?
@@ -28,6 +25,10 @@ class Effing
       @av_frame = avcodec_alloc_frame
       raise NoMemoryError "avcodec_alloc_frame() failed" unless @av_frame
       @av_frame = AVFrame.new(@av_frame)
+    end
+
+    def finalize(id)
+      av_free(@av_frame)
     end
   end
 end
