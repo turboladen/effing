@@ -28,8 +28,6 @@ class Effing
 
       find_stream_info
 
-      # Set up finalizer to free up resources
-      ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
       initialize_streams
     end
 
@@ -90,12 +88,6 @@ class Effing
     # @return [Float] The format context's duration divided by AV_TIME_BASE.
     def duration
       @duration ||= @av_format_context[:duration].to_f / AV_TIME_BASE
-    end
-
-    def self.finalize(id)
-      unless @av_format_context.nil?
-        FFI::FFmpeg.avformat_close_input(@av_format_context)
-      end
     end
 
     private
