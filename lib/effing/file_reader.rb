@@ -89,6 +89,9 @@ class Effing
       @duration ||= @av_format_context[:duration].to_f / AV_TIME_BASE
     end
 
+    #---------------------------------------------------------------------------
+    # Privates
+    #---------------------------------------------------------------------------
     private
 
     def initialize_streams
