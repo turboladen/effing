@@ -1,14 +1,14 @@
 require 'spec_helper'
-require 'effing/base_frame'
+require 'effing/frames/base_frame'
 
 
-describe Effing::BaseFrame do
+describe Effing::Frames::BaseFrame do
   describe "#initialize" do
     it "inits the AVFrame and defines the finalizer method" do
-      Effing::BaseFrame.any_instance.should_receive(:init_frame)
+      Effing::Frames::BaseFrame.any_instance.should_receive(:init_frame)
       ObjectSpace.should_receive(:define_finalizer)
 
-      Effing::BaseFrame.new
+      Effing::Frames::BaseFrame.new
     end
   end
 

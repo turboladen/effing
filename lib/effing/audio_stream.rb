@@ -1,6 +1,6 @@
 require_relative 'logger'
 require_relative 'stream'
-require_relative 'audio_frame'
+require_relative 'frames/audio_frame'
 
 
 class Effing
@@ -12,7 +12,7 @@ class Effing
     def initialize(av_stream, av_format_context)
       super(av_stream, av_format_context)
 
-      @raw_frame = AudioFrame.new
+      @raw_frame = Effing::Frames::AudioFrame.new
     end
 
     def decode_frame(packet)

@@ -1,6 +1,6 @@
 require_relative 'logger'
 require_relative 'stream'
-require_relative 'video_frame'
+require_relative 'frames/video_frame'
 
 
 class Effing
@@ -20,7 +20,7 @@ class Effing
       log "width: #{@width}"
       log "height: #{@height}"
 
-      @raw_frame = VideoFrame.new(@width, @height, @pixel_format)
+      @raw_frame = Effing::Frames::VideoFrame.new(@width, @height, @pixel_format)
     end
 
     def decode_frame(packet)
