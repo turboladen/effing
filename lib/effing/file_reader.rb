@@ -1,7 +1,6 @@
 require_relative '../ffi/ffmpeg'
-require_relative 'stream'
-require_relative 'audio_stream'
-require_relative 'video_stream'
+require_relative 'streams/audio_stream'
+require_relative 'streams/video_stream'
 require_relative 'logger'
 
 
@@ -9,6 +8,7 @@ class Effing
   class FileReader
     include LogSwitch::Mixin
     include FFI::FFmpeg
+    include Effing::Streams
 
     attr_reader :streams, :av_format_context
 

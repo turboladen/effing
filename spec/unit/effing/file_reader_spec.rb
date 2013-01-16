@@ -118,12 +118,12 @@ describe Effing::FileReader do
     it "creates a new stream for each stream in the AVFormatContext" do
       FFI::FFmpeg::AVStream.should_receive(:new).with(video_stream).
         and_return(av_stream_video)
-      Effing::VideoStream.should_receive(:new).
+      Effing::Streams::VideoStream.should_receive(:new).
         with(av_stream_video, av_format_context).and_return("a video stream")
 
       FFI::FFmpeg::AVStream.should_receive(:new).with(audio_stream).
         and_return(av_stream_audio)
-      Effing::AudioStream.should_receive(:new).
+      Effing::Streams::AudioStream.should_receive(:new).
         with(av_stream_audio, av_format_context).and_return("an audio stream")
 
       subject.send(:initialize_streams)
