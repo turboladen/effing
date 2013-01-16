@@ -38,7 +38,7 @@ class Effing
       @frame_finished = FFI::MemoryPointer.new(:int)
 
       # Set up finalizer to free up resources
-      ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
+      ObjectSpace.define_finalizer(self, method(:finalize).to_proc)
     end
 
     # Use to set the types of frames to discard when demuxing. Refer to
@@ -174,7 +174,7 @@ class Effing
 
     private
 
-    def self.finalize(id)
+    def finalize(id)
       avcodec_close(@av_codec_context)
     end
   end
