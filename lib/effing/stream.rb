@@ -1,6 +1,5 @@
 require_relative '../ffi/ffmpeg'
 require_relative 'logger'
-require 'pp'
 
 
 class Effing
@@ -19,19 +18,24 @@ class Effing
     def initialize(av_stream, av_format_context)
       @av_stream = av_stream
       @av_format_context = av_format_context
-      @av_codec_context = AVCodecContext.new(@av_stream[:codec])
+      @av_codec_context = @av_stream[:codec]
 
       # open the codec
       codec = avcodec_find_decoder(@av_codec_context[:codec_id])
 
-      if codec.null?
+      if codec.null? || codec.nil?
         raise RuntimeError, "No decoder found for #{@av_codec_context[:codec_id]}"
       end
 
-      #avcodec_open(@av_codec_context, codec) == 0 or
-      #  raise RuntimeError, "avcodec_open() failed"
-      rc = avcodec_open2(@av_codec_context, codec, nil)
-      raise "Couldn't open codec" if rc < 0
+      if old_api?
+        avcodec_open(@av_codec_context, codec) == 0 or
+          raise RuntimeError, "avcodec_open() failed"
+      else
+        rc = avcodec_open2(@av_codec_context, codec, nil)
+        raise "Couldn't open codec" if rc < 0
+      end
+
+      @frame_finished = FFI::MemoryPointer.new(:int)
 
       # Set up finalizer to free up resources
       ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
@@ -175,6 +179,3 @@ class Effing
     end
   end
 end
-
-
-require_relative 'video_stream'

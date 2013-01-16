@@ -1,5 +1,7 @@
 require_relative '../ffi/ffmpeg'
 require_relative 'stream'
+require_relative 'audio_stream'
+require_relative 'video_stream'
 require_relative 'logger'
 
 
@@ -28,7 +30,7 @@ class Effing
 
       # Set up finalizer to free up resources
       ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
-      initialize_streams(p)
+      initialize_streams
     end
 
     # Opens the A/V file using FFmpeg.avformat_open_input.
@@ -98,24 +100,29 @@ class Effing
 
     private
 
-    def initialize_streams(p={})
-      @av_format_context[:nb_streams].times do |i|
-        av_stream =
-          FFI::FFmpeg::AVStream.new(@av_format_context[:streams][i].read_pointer)
+    def initialize_streams
+      av_streams = @av_format_context[:streams].
+        read_array_of_pointer(@av_format_context[:nb_streams])
 
-        log "Stream #{i} info:"
-        log "Codec type: #{av_stream.codec_type}"
+      av_streams.each_with_index do |av_stream_pointer, i|
+        log "Reading stream #{i}..."
 
-        case av_stream.codec_type
+        av_stream = FFI::FFmpeg::AVStream.new(av_stream_pointer)
+        log "Codec name: #{av_stream[:codec][:codec_name]}"
+        log "Codec type: #{av_stream[:codec][:codec_type]}"
+
+        case av_stream[:codec][:codec_type]
         when :video
           log "Video stream"
           @streams << VideoStream.new(av_stream, @av_format_context)
-          # TODO: fix for 2nd stream
-          break
+        when :audio
+          log "Audio stream"
+          @streams << AudioStream.new(av_stream, @av_format_context)
         else
-          warn "Unsupported stream type: #{av_stream.codec_type}"
+          warn "Unsupported stream type: #{av_stream[:codec][:codec_type]}"
         end
 
+        log "Done reading stream #{i}."
       end
     end
   end
