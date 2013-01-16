@@ -10,7 +10,6 @@ class Effing
     attr_reader :av_frame
 
     def initialize
-      @av_frame = nil
       init_frame
       ObjectSpace.define_finalizer(self, method(:finalize).to_proc)
     end
