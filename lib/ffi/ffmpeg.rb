@@ -172,6 +172,7 @@ module FFI
     def old_api?
       @@old_api
     end
+    module_function :old_api?
 
     @@loaded_libraries = ffi_libraries
     def loaded_libraries

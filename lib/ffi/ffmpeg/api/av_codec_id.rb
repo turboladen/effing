@@ -1,6 +1,5 @@
 module FFI
   module FFmpeg
-    #AVCodecID = enum :none, -1,
     AVCodecID = enum :none,
                      :mpeg1_video,
                      :mpeg2_video,

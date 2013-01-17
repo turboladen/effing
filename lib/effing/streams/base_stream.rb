@@ -16,30 +16,50 @@ class Effing
 
       # @param [FFI::FFmpeg::AVStream] av_stream
       # @param [FFI::FFmpeg::AVFormatContext] av_format_context
-      def initialize(av_stream, av_format_context)
+      # @param [FFi::Pointer] options Pointer to an FFI::FFmpeg::AVDictionary
+      #   pointer; used for opening the codec used for decoding the stream.
+      def initialize(av_stream, av_format_context, options=nil)
         @av_stream = av_stream
         @av_format_context = av_format_context
         @av_codec_context = @av_stream[:codec]
 
         # open the codec
-        codec = avcodec_find_decoder(@av_codec_context[:codec_id])
-
-        if codec.null? || codec.nil?
-          raise RuntimeError, "No decoder found for #{@av_codec_context[:codec_id]}"
-        end
-
-        if old_api?
-          avcodec_open(@av_codec_context, codec) == 0 or
-            raise RuntimeError, "avcodec_open() failed"
-        else
-          rc = avcodec_open2(@av_codec_context, codec, nil)
-          raise "Couldn't open codec" if rc < 0
-        end
+        codec = find_decoder(@av_codec_context[:codec_id])
+        open_codec(codec, options)
 
         @frame_finished = FFI::MemoryPointer.new(:int)
 
         # Set up finalizer to free up resources
         ObjectSpace.define_finalizer(self, method(:finalize).to_proc)
+      end
+
+      # @param [Symbol,Fixnum] codec_id Correlates to an FFI::FFmpeg::AVCodecID;
+      #   use a Symbol to correlate to one of the enumed values; those values
+      #   translate to Fixnum values.
+      # @return [FFI::Pointer] Pointer to the memory that holds the info
+      #   about the codec to use for this stream.
+      def find_decoder(codec_id)
+        codec = FFI::FFmpeg.avcodec_find_decoder(codec_id)
+
+        if codec.nil? || codec.null?
+          raise RuntimeError, "No decoder found for #{@av_codec_context[:codec_id]}"
+        end
+
+        codec
+      end
+
+      # @param [FFI::Pointer] codec Pointer to the memory that holds the info
+      #   about the codec to use for this stream.
+      # @param [FFi::Pointer] options Pointer to an FFI::FFmpeg::AVDictionary
+      #   pointer.
+      def open_codec(codec, options=nil)
+        rc = if FFI::FFmpeg.old_api?
+          FFI::FFmpeg.avcodec_open(@av_codec_context, codec)
+        else
+          FFI::FFmpeg.avcodec_open2(@av_codec_context, codec, options)
+        end
+
+        raise "Couldn't open codec" if rc.to_i < 0
       end
 
       # Use to set the types of frames to discard when demuxing. Refer to
@@ -118,24 +138,28 @@ class Effing
       # @param [Proc] callback Block that gets called after all packets have been
       #   read.
       def each_frame(callback=nil, &frame_block)
+=begin
         raise ArgumentError, "No block provided" unless block_given?
 
         av_packet = AVPacket.new
-        av_init_packet(av_packet)
+        FFI::FFmpeg.av_init_packet(av_packet)
         av_packet[:data] = nil
         av_packet[:size] = 0
 
-        while av_read_frame(@av_format_context, av_packet) >= 0
+        while FFI::FFmpeg.av_read_frame(@av_format_context, av_packet) >= 0
           if av_packet[:stream_index] == index
-            #frame = decode_frame(av_packet)
-            frame = frame_block.call(decode_frame(av_packet)) unless av_packet.null?
-            rc = frame ? yield(frame) : true
+            #frame = frame_block.call(decode_frame(av_packet)) unless av_packet.null?
+            #rc = frame ? yield(frame) : true
+            frame = decode_frame(av_packet)
+            frame_block.call(frame)
           end
 
-          av_free_packet(av_packet)
+          FFI::FFmpeg.av_free_packet(av_packet)
 
           break if rc == false
         end
+=end
+        extract_packets(true, &frame_block)
 
         callback.call if callback
       end
@@ -146,22 +170,24 @@ class Effing
       #
       # @param [Proc] callback Block that gets called after all packets have been
       #   read.
-      def each_packet(callback=nil, &packet_block )
+      def each_packet(callback=nil, &packet_block)
+=begin
         raise ArgumentError, "No block provided" unless block_given?
 
         av_packet = AVPacket.new
-        av_init_packet(av_packet)
+        FFI::FFmpeg.av_init_packet(av_packet)
         av_packet[:data] = nil
         av_packet[:size] = 0
 
-        while av_read_frame(@av_format_context, av_packet) >= 0
+        while FFI::FFmpeg.av_read_frame(@av_format_context, av_packet) >= 0
           if av_packet[:stream_index] == index
-            #yield(av_packet) unless av_packet.null?
             packet_block.call(av_packet) unless av_packet.null?
           end
 
-          av_free_packet(av_packet)
+          FFI::FFmpeg.av_free_packet(av_packet)
         end
+=end
+        extract_packets(false, &packet_block)
 
         callback.call if callback
       end
@@ -175,8 +201,33 @@ class Effing
 
       private
 
+      def extract_packets(decode, &block)
+        raise ArgumentError, "No block provided" unless block_given?
+
+        av_packet = AVPacket.new
+        FFI::FFmpeg.av_init_packet(av_packet)
+        av_packet[:data] = nil
+        av_packet[:size] = 0
+
+        while FFI::FFmpeg.av_read_frame(@av_format_context, av_packet) >= 0
+          if av_packet[:stream_index] == index
+            #frame = frame_block.call(decode_frame(av_packet)) unless av_packet.null?
+            #rc = frame ? yield(frame) : true
+            yield_object = if decode
+              decode_frame(av_packet)
+            else
+              av_packet
+            end
+
+            block.call(yield_object)
+          end
+
+          FFI::FFmpeg.av_free_packet(av_packet)
+        end
+      end
+
       def finalize(id)
-        avcodec_close(@av_codec_context)
+        FFI::FFmpeg.avcodec_close(@av_codec_context)
       end
     end
   end
