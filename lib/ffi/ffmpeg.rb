@@ -179,10 +179,6 @@ module FFI
       @@loaded_libraries.map { |lib| lib.name }
     end
 
-    def av_free_packet(pkt)
-      FFI::FFmpeg.av_free_packet(pkt)
-    end
-
     # The version of libavutil that was loaded.
     #
     # @return [Hash] :major, :minor, :micro versions.

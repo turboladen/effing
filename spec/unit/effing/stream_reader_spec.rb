@@ -42,7 +42,7 @@ describe Effing::StreamReader do
 
     it "passes the block on to the #each_frome method of the stream" do
       expect { |b|
-        stream.should_receive(:each_frame).with &b
+        stream.should_receive(:each_frame).with(&b)
         subject.decode(&b)
       }.to yield_control
     end
@@ -56,7 +56,7 @@ describe Effing::StreamReader do
 
     it "passes the block on to the #each_packet method of the stream" do
       expect { |b|
-        stream.should_receive(:each_packet).with &b
+        stream.should_receive(:each_packet).with(&b)
         subject.demux(&b)
       }.to yield_control
     end

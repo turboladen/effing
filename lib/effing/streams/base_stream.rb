@@ -129,7 +129,6 @@ class Effing
       end
 
       def decode_frame(packet)
-        return false
         raise NotImplementedError, "decode_frame() not defined for #{self.class}"
       end
 
