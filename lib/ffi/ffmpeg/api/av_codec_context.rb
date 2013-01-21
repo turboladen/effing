@@ -1,5 +1,6 @@
 require_relative 'av_audio_service_type'
 require_relative 'av_chroma_location'
+require_relative 'av_codec'
 require_relative 'av_codec_id'
 require_relative 'av_color_primaries'
 require_relative 'av_color_range'
@@ -19,7 +20,7 @@ module FFI
       layout  :av_class, :pointer,
               :log_level_offset, :int,    # new!
               :codec_type, AVMediaType,
-              :codec, :pointer,
+              :codec, AVCodec.ptr,
               :codec_name, [:char, 32],
               :codec_id, AVCodecID,
               :codec_tag, :uint,
