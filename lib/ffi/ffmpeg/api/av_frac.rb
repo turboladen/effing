@@ -5,10 +5,12 @@ module FFI
               :num, :int64,
               :den, :int64
 
+      # @return [Float] +val+ + +num+ / +den+.
       def to_f
         self[:val] + self[:num].to_f / self[:den]
       end
 
+      # @return [Integer] +val+ + +num+ / +den+.
       def to_i
         self[:val] + self[:num] / self[:den]
       end

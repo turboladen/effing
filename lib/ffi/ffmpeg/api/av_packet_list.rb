@@ -2,7 +2,7 @@ module FFI
   module FFmpeg
     class AVPacketList < FFI::Struct
       layout  :pkt, AVPacket,
-              :next, :pointer
+              :next, AVPacketList.ptr
     end
   end
 end

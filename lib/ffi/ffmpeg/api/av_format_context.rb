@@ -1,5 +1,6 @@
 require_relative 'av_class'
 require_relative 'av_codec_id'
+require_relative 'av_dictionary'
 require_relative 'av_duration_estimation_method'
 require_relative 'av_input_format'
 require_relative 'av_io_context'
@@ -39,7 +40,7 @@ module FFI
               :max_picture_buffer,  :uint,
               :nb_chapters,         :uint,
               :chapters,            :pointer,
-              :metadata,            :pointer,
+              :metadata,            AVDictionary.ptr,
               :start_time_realtime, :int64,
               :fps_probe_size,      :int,       # new!
               :error_recognition,   :int,       # new!
