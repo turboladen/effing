@@ -131,6 +131,7 @@ module FFI
     MAX_REORDER_DELAY    = 16
     AV_TIME_BASE         = 1000000
     AV_NUM_DATA_POINTERS = @@old_api ? 4 : 8
+    AV_PARSER_PTS_NB     = 4
 
     ###################################################
     #  Enums                                          #

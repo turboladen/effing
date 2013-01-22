@@ -1,4 +1,3 @@
-require_relative 'av_codec_context'
 require_relative 'av_dictionary'
 require_relative 'av_pan_scan'
 require_relative 'av_picture_type'
