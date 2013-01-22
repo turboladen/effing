@@ -7,11 +7,13 @@ class Effing
     class AudioStream < BaseStream
       include LogSwitch::Mixin
 
-      attr_reader :raw_frame
+      attr_reader :raw_frame, :channels, :sample_format, :sample_rate, :format
 
       def initialize(av_stream, av_format_context)
         super(av_stream, av_format_context)
 
+        @channels = @av_codec_context[:channels].zero? ? nil : @av_codec_context[:channels]
+        @sample_format = @av_codec_context[:sample_fmt]
         @raw_frame = Effing::Frames::AudioFrame.new
       end
 
@@ -32,10 +34,18 @@ class Effing
         end
 
         if @frame_finished.read_int >= 0
+          @channels = @raw_frame.av_frame[:channels]
+          @sample_rate = @raw_frame.av_frame[:sample_rate]
+          @format = AVSampleFormat[@raw_frame.av_frame[:format]]
+
           log "Frame info:"
           log "\tSample count: #{@raw_frame.av_frame[:nb_samples]}"
-          log "\tpts: #{@raw_frame.av_frame[:pts]}"
-          log "\ttime base: #{@raw_frame.av_frame[:time_base]}"
+          log "\tPacket presentation timestamp: #{@raw_frame.av_frame[:pkt_pts]}"
+          log "\tPacket display timestamp: #{@raw_frame.av_frame[:pkt_dts]}"
+          log "\tSample rate: #{@raw_frame.av_frame[:sample_rate]}"
+          log "\tChannels: #{@raw_frame.av_frame[:channels]}"
+          log "\tPacket size: #{@raw_frame.av_frame[:pkt_size]}"
+          log "\tFormat: #{AVSampleFormat[@raw_frame.av_frame[:format]]}"
           return @raw_frame
         else
           log "frame_finished: #{@frame_finished.read_int}"

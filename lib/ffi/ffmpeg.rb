@@ -35,6 +35,7 @@ module FFI
     #--------------------------------------------------
     # libavutil
     #--------------------------------------------------
+    require_relative 'ffmpeg/api/av_sample_format'
     ffi_lib LIBRARY_FILENAME[:avutil]
 
     attach_function :av_log_set_level, [AVLogLevel], :void
@@ -42,6 +43,17 @@ module FFI
     attach_function :av_free, [:pointer], :void
     attach_function :av_freep, [:pointer], :void
     attach_function :avutil_version, [], :uint
+    attach_function :av_samples_alloc,
+      [:pointer, :pointer, :int, :int, AVSampleFormat, :int],
+      :int
+    attach_function :av_samples_copy,
+      [:pointer, :pointer, :int, :int, :int, :int, AVSampleFormat],
+      :int
+    attach_function :av_samples_get_buffer_size,
+      [:pointer, :int, :int, AVSampleFormat, :int],
+      :int
+    attach_function :av_sample_fmt_is_planar, [AVSampleFormat], :int
+    attach_function :av_mallocz, [:uint8], :pointer
 
     #--------------------------------------------------
     # libavformat
@@ -111,6 +123,9 @@ module FFI
     attach_function :avcodec_alloc_frame, [], :pointer
     attach_function :av_init_packet, [:pointer], :void
     attach_function :avcodec_version, [], :uint
+    attach_function :avcodec_decode_audio4,
+      [:pointer, :pointer, :pointer, :pointer],
+      :int
 
     if @@old_api
       warn "Using old API avcodec_decode_video()"
@@ -132,6 +147,7 @@ module FFI
     AV_TIME_BASE         = 1000000
     AV_NUM_DATA_POINTERS = @@old_api ? 4 : 8
     AV_PARSER_PTS_NB     = 4
+    AVCODEC_MAX_AUDIO_FRAME_SIZE = 192000
 
     ###################################################
     #  Enums                                          #

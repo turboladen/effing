@@ -94,14 +94,14 @@ class Effing
       #
       # @return [String]
       def codec_name
-        @av_stream.codec[:codec_name]
+        @av_stream[:codec][:codec_name]
       end
 
       # The general type of codec (i.e. mpeg4).
       #
-      # @return [Synbol]
+      # @return [Symbol]
       def codec_id
-        @av_stream.codec[:codec_id]
+        @av_stream[:codec][:codec_id]
       end
 
       # Position in the file in which the stream exists.
