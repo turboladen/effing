@@ -63,9 +63,6 @@ class Tester < Thor
     stream_reader = Effing::StreamReader.new(file_path, stream_type)
     destination_file_name = "tester_decoded_file"
 
-    play_back_codec = stream_reader.stream.av_stream[:codec][:codec][:name]
-    input_format = stream_reader.file_reader.av_format_context[:iformat][:name]
-
     destination_file = if stream_type == :video
       Effing::RawVideoFile.new(destination_file_name,
         stream_reader.stream.width,
