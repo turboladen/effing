@@ -45,6 +45,7 @@ class Effing
     def find_stream(stream_id)
       @file_reader.dump_format if Effing.log?
       warn 'No streams found in file' if @file_reader.streams.empty?
+      log "stream_id type: #{stream_id.class}"
 
       stream = if stream_id.is_a? Symbol
         @file_reader.streams.find do |stream|
@@ -65,7 +66,7 @@ class Effing
         stream
       else
         log 'Stream not found!'
-        raise "No stream found matching stream_id: #{stream_id}"
+        nil
       end
     end
   end

@@ -65,9 +65,15 @@ describe Effing::StreamReader do
   describe '#find_stream' do
     before do
       file_reader.stub(:streams).and_return streams
+      Effing.log = true
     end
 
     context 'the param is a Symbol' do
+      subject do
+        Effing::FileReader.stub(:new).and_return file_reader
+        Effing::StreamReader.new('some_file', :video)
+      end
+
       let(:streams) do
         stream.stub(:type).and_return :video
 
@@ -89,6 +95,7 @@ describe Effing::StreamReader do
 
     context 'the param is a Fixnum' do
       let(:streams) do
+        stream.stub(:type).and_return :video
         stream.stub(:index).and_return 0
 
         [stream]
