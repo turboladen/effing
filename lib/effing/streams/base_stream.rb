@@ -201,7 +201,7 @@ class Effing
       private
 
       def extract_packets(decode, &block)
-        raise ArgumentError, "No block provided" unless block_given?
+        raise ArgumentError, 'No block provided' unless block_given?
 
         av_packet = AVPacket.new
         FFI::FFmpeg.av_init_packet(av_packet)

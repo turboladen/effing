@@ -35,13 +35,13 @@ class Effing
         if len > 0
           log "Read bytes: #{len}"
         elsif len.zero?
-          warn "Couldn't decompress frame"
+          warn 'Could not decompress frame'
         else
-          warn "Negative return on decompressing frame; could be an error..."
+          warn 'Negative return on decompressing frame; could be an error...'
         end
 
         if @frame_finished.read_int >= 0
-          log "Frame info:"
+          log 'Frame info:'
           log "\tpict num: #{@raw_frame.av_frame[:coded_picture_number]}"
           log "\tpts: #{@raw_frame.av_frame[:pts]}"
           log "\tdts: #{@raw_frame.av_frame[:pkt_dts]}"

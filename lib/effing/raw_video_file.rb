@@ -75,7 +75,7 @@ class Effing
         p @width
         p @height
         p @pixel_format
-        raise "Could not allocate raw video buffer"
+        raise 'Could not allocate raw video buffer'
       end
 
       return dest_picture, destination_buffer_size

@@ -19,7 +19,7 @@ class Effing
 
       def decode_frame(packet)
         len = if FFI::FFmpeg.old_api?
-          abort "Audio decoding not implemented for old FFmpeg API"
+          abort 'Audio decoding not implemented for old FFmpeg API'
         else
           avcodec_decode_audio4(@av_codec_context, @raw_frame.av_frame,
             @frame_finished, packet)
@@ -28,9 +28,9 @@ class Effing
         if len > 0
           log "Read bytes: #{len}"
         elsif len.zero?
-          warn "Couldn't decompress frame"
+          warn 'Could not decompress frame'
         else
-          warn "Negative return on decompressing frame; could be an error..."
+          warn 'Negative return on decompressing frame; could be an error...'
         end
 
         if @frame_finished.read_int >= 0
@@ -38,7 +38,7 @@ class Effing
           @sample_rate = @raw_frame.av_frame[:sample_rate]
           @format = AVSampleFormat[@raw_frame.av_frame[:format]]
 
-          log "Frame info:"
+          log 'Frame info:'
           log "\tSample count: #{@raw_frame.av_frame[:nb_samples]}"
           log "\tPacket presentation timestamp: #{@raw_frame.av_frame[:pkt_pts]}"
           log "\tPacket display timestamp: #{@raw_frame.av_frame[:pkt_dts]}"

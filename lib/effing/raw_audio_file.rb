@@ -17,7 +17,7 @@ class Effing
     # Properly aligns frames before writing to file, then writes the frame out
     # to the file.
     #
-    # @param [FFI::Struct::InlineArray] data +data+ infor from an
+    # @param [FFI::Struct::InlineArray] av_frame Info from an
     #   FFI::FFmpeg::AVFrame.
     def write(av_frame)
       dest_data, destination_buffer_size = init_destination_samples(av_frame)
@@ -29,7 +29,7 @@ class Effing
         av_frame[:format], 1
       )
       if ret < 0
-        msg = "Couldn't allocate audio buffer"
+        msg = 'Could not allocate audio buffer'
         msg << "\nline_size: #{line_size}"
         msg << "\nnb samples: #{av_frame[:nb_samples]}"
         msg << "\nformat: #{av_frame[:format]}"

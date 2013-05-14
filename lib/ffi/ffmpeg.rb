@@ -74,7 +74,7 @@ module FFI
         [:pointer, :int, :string, :int],
         :void
     rescue
-      warn "Using old FFmpeg API; using av_open_input_file instead of avformat_open_input"
+      warn 'Using old FFmpeg API; using av_open_input_file instead of avformat_open_input'
        @@old_api = true
       attach_function :av_open_input_file,
         [:pointer, :string, :pointer, :int, :pointer],
@@ -147,7 +147,7 @@ module FFI
       :int
 
     if @@old_api
-      warn "Using old API avcodec_decode_video()"
+      warn 'Using old API avcodec_decode_video()'
       attach_function :avcodec_decode_video, [:pointer, :pointer, :pointer,
         :pointer, :int], :int,
         { :blocking => true }
@@ -175,7 +175,7 @@ module FFI
     require_relative 'ffmpeg/api/av_codec_id'
 
     if @@old_api
-      warn "Using old API pixel_format"
+      warn 'Using old API pixel_format'
       require_relative 'ffmpeg/old_api/pixel_format'
     else
       require_relative 'ffmpeg/api/av_pixel_format'
@@ -185,11 +185,11 @@ module FFI
     #  Data Structures                                #
     ###################################################
     if @@old_api
-      warn "Using old API av_packet"
-      warn "Using old API av_stream"
-      warn "Using old API av_format_context"
-      warn "Using old API av_codec_context"
-      warn "Using old API av_frame"
+      warn 'Using old API av_packet'
+      warn 'Using old API av_stream'
+      warn 'Using old API av_format_context'
+      warn 'Using old API av_codec_context'
+      warn 'Using old API av_frame'
 
       require_relative 'ffmpeg/old_api/av_packet'
       require_relative 'ffmpeg/old_api/av_stream'

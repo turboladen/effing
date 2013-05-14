@@ -36,7 +36,7 @@ class Effing
         @av_frame = FFI::FFmpeg.avcodec_alloc_frame
 
         if @av_frame.to_i < 0
-          raise NoMemoryError, "avcodec_alloc_frame() failed"
+          raise NoMemoryError, 'avcodec_alloc_frame() failed'
         end
 
         @av_frame = FFI::FFmpeg::AVFrame.new(@av_frame)

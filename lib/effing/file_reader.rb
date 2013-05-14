@@ -111,10 +111,10 @@ class Effing
 
         case av_stream[:codec][:codec_type]
         when :video
-          log "Video stream"
+          log 'Video stream'
           @streams << VideoStream.new(av_stream, @av_format_context)
         when :audio
-          log "Audio stream"
+          log 'Audio stream'
           @streams << AudioStream.new(av_stream, @av_format_context)
         else
           warn "Unsupported stream type: #{av_stream[:codec][:codec_type]}"
