@@ -46,9 +46,14 @@ module FFI
     attach_function :av_samples_alloc,
       [:pointer, :pointer, :int, :int, AVSampleFormat, :int],
       :int
-    attach_function :av_samples_copy,
-      [:pointer, :pointer, :int, :int, :int, :int, AVSampleFormat],
-      :int
+    begin
+      attach_function :av_samples_copy,
+        [:pointer, :pointer, :int, :int, :int, :int, AVSampleFormat],
+        :int
+    rescue FFI::NotFoundError
+      warn 'Unable to attach function :av_samples_copy'
+    end
+
     attach_function :av_samples_get_buffer_size,
       [:pointer, :int, :int, AVSampleFormat, :int],
       :int
