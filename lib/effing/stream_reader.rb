@@ -1,4 +1,5 @@
 require_relative 'file_reader'
+require_relative 'logger'
 
 
 class Effing
@@ -6,6 +7,7 @@ class Effing
   # A StreamReader allows for extracting a single stream at a time via decoding
   # or demultiplexing it.
   class StreamReader
+    include LogSwitch::Mixin
 
     # @return [Effing::Stream] The stream that will be demuxed.
     attr_reader :stream
@@ -42,12 +44,27 @@ class Effing
     #   the given stream_id.  Returns +nil+ if no stream found.
     def find_stream(stream_id)
       @file_reader.dump_format if Effing.log?
+      warn 'No streams found in file' if @file_reader.streams.empty?
 
-      if stream_id.is_a? Symbol
-        @file_reader.streams.find { |stream| stream.type == stream_id }
+      stream = if stream_id.is_a? Symbol
+        @file_reader.streams.find do |stream|
+          log "stream type: '#{stream.type}'"
+          stream.type == stream_id
+        end
       elsif stream_id.to_i
-        @file_reader.streams.find { |stream| stream.index == stream_id.to_i }
+        @file_reader.streams.find do |stream|
+          log "stream type: '#{stream.type}'"
+          stream.index == stream_id.to_i
+        end
+      #else
+      #  abort "Don't know how to find stream using '#{stream_id}' (#{stream_id.class})"
+      end
+
+      if stream
+        log "Found stream #{stream.inspect}"
+        stream
       else
+        log "Stream not found!"
         raise "No stream found matching stream_id: #{stream_id}"
       end
     end
