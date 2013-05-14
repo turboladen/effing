@@ -18,9 +18,9 @@ describe Effing::FileReader do
     Effing::FileReader.new('some_file')
   end
 
-  describe "open_file" do
+  describe 'open_file' do
     let(:av_format_context) do
-      double "FFI::MemoryPointer"
+      double 'FFI::MemoryPointer'
     end
 
     before do
@@ -28,24 +28,24 @@ describe Effing::FileReader do
       FFI::MemoryPointer.stub(:new).and_return av_format_context
     end
 
-    context "FFmpeg.avformat_open_input returns a non-zero" do
+    context 'FFmpeg.avformat_open_input returns a non-zero' do
       before do
         FFI::FFmpeg.should_receive(:avformat_open_input).and_return(-1)
       end
 
-      it "raises a RuntimeError" do
+      it 'raises a RuntimeError' do
         expect {
           subject.open_file('some_file')
         }.to raise_error RuntimeError
       end
     end
 
-    context "FFmpeg.avformat_open_input returns zero" do
+    context 'FFmpeg.avformat_open_input returns zero' do
       before do
         FFI::FFmpeg.should_receive(:avformat_open_input).and_return 0
       end
 
-      it "gets the AVFormatContext info into an instance var" do
+      it 'gets the AVFormatContext info into an instance var' do
         subject.instance_variable_get(:@av_format_context).should be_nil
         av_format_context.should_receive(:get_pointer).with 0
         FFI::FFmpeg::AVFormatContext.should_receive(:new).and_return av_format_context
@@ -54,13 +54,13 @@ describe Effing::FileReader do
     end
   end
 
-  describe "#find_stream_info" do
+  describe '#find_stream_info' do
     before do
       subject.should_receive(:find_stream_info).and_call_original
     end
 
-    context "FFmpeg.av_find_stream_info returns negative value" do
-      it "raises" do
+    context 'FFmpeg.av_find_stream_info returns negative value' do
+      it 'raises' do
         expect {
           FFI::FFmpeg.stub(:av_find_stream_info).and_return(-1)
           subject.find_stream_info
@@ -69,24 +69,24 @@ describe Effing::FileReader do
     end
   end
 
-  describe "#initialize_streams" do
+  describe '#initialize_streams' do
     let(:video_stream) do
-      double "FFI::Pointer video"
+      double 'FFI::Pointer video'
     end
 
     let(:av_stream_video) do
-      s = double "FFI::FFmpeg::AVStream video"
+      s = double 'FFI::FFmpeg::AVStream video'
       s.stub_chain(:[], :[]).and_return(:video)
 
       s
     end
 
     let(:audio_stream) do
-      double "FFI::Pointer audio"
+      double 'FFI::Pointer audio'
     end
 
     let(:av_stream_audio) do
-      s = double "FFI::FFmpeg::AVStream audio"
+      s = double 'FFI::FFmpeg::AVStream audio'
       s.stub_chain(:[], :[]).and_return(:audio)
 
       s
@@ -97,7 +97,7 @@ describe Effing::FileReader do
     end
 
     let(:streams_pointer) do
-      a = double "FFI::Pointer"
+      a = double 'FFI::Pointer'
       a.should_receive(:read_array_of_pointer).with(2).and_return(streams)
 
       a
@@ -115,16 +115,16 @@ describe Effing::FileReader do
       subject.instance_variable_set(:@av_format_context, av_format_context)
     end
 
-    it "creates a new stream for each stream in the AVFormatContext" do
+    it 'creates a new stream for each stream in the AVFormatContext' do
       FFI::FFmpeg::AVStream.should_receive(:new).with(video_stream).
         and_return(av_stream_video)
       Effing::Streams::VideoStream.should_receive(:new).
-        with(av_stream_video, av_format_context).and_return("a video stream")
+        with(av_stream_video, av_format_context).and_return('a video stream')
 
       FFI::FFmpeg::AVStream.should_receive(:new).with(audio_stream).
         and_return(av_stream_audio)
       Effing::Streams::AudioStream.should_receive(:new).
-        with(av_stream_audio, av_format_context).and_return("an audio stream")
+        with(av_stream_audio, av_format_context).and_return('an audio stream')
 
       subject.send(:initialize_streams)
       subject.instance_variable_get(:@streams).size.should == 2
