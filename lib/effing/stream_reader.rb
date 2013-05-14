@@ -64,7 +64,7 @@ class Effing
         log "Found stream #{stream.inspect}"
         stream
       else
-        log "Stream not found!"
+        log 'Stream not found!'
         raise "No stream found matching stream_id: #{stream_id}"
       end
     end
