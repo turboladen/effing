@@ -84,7 +84,14 @@ module FFI
         :void
     end
 
-    attach_function :av_find_stream_info, [:pointer], :int
+    # Do ffmpeg, then try libav
+    begin
+      attach_function :av_find_stream_info, [:pointer], :int
+    rescue FFI::NotFoundError
+      warn 'Unable to attach function av_find_stream_info(); trying avformat_find_stream_info()'
+      attach_function :avformat_find_stream_info, [:pointer, :pointer], :int
+    end
+
     attach_function :av_read_frame, [:pointer, :pointer], :int
     attach_function :av_seek_frame, [:pointer, :int, :long_long, :int], :int
     attach_function :av_find_default_stream_index, [ :pointer ], :int
@@ -123,7 +130,14 @@ module FFI
     #--------------------------------------------------
     ffi_lib LIBRARY_FILENAME[:avcodec]
     attach_function :avcodec_find_decoder, [:int], :pointer
-    attach_function :avcodec_open, [:pointer, :pointer], :int
+
+    # libav 0.9.6 doesn't have this call anymore.
+    begin
+      attach_function :avcodec_open, [:pointer, :pointer], :int
+    rescue FFI::NotFoundError
+      warn 'Unable to attach function avcodec_open()'
+    end
+
     attach_function :avcodec_open2, [:pointer, :pointer, :pointer], :int
     attach_function :avcodec_alloc_frame, [], :pointer
     attach_function :av_init_packet, [:pointer], :void

@@ -52,7 +52,11 @@ class Effing
     #
     # @raise [RuntimeError] If FFmpeg wasn't able to find stream info.
     def find_stream_info
-      return_code = FFI::FFmpeg.av_find_stream_info(@av_format_context)
+      return_code = if defined?(FFI::FFmpeg.av_find_stream_info)
+        FFI::FFmpeg.av_find_stream_info(@av_format_context)
+      else
+        FFI::FFmpeg.avformat_find_stream_info(@av_format_context, nil)
+      end
 
       if return_code < 0
         raise RuntimeError,
