@@ -39,7 +39,7 @@ class Effing
     #
     # @param [Symbol,Fixnum] stream_id The stream to look for.
     # @return [Effing::Stream] The audio or video stream that corresponds to
-    #   the given stream_id.
+    #   the given stream_id.  Returns +nil+ if no stream found.
     def find_stream(stream_id)
       @file_reader.dump_format if Effing.log?
 
