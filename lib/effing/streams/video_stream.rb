@@ -45,9 +45,11 @@ class Effing
           log "\tpict num: #{@raw_frame.av_frame[:coded_picture_number]}"
           log "\tpts: #{@raw_frame.av_frame[:pts]}"
           log "\tdts: #{@raw_frame.av_frame[:pkt_dts]}"
-          return @raw_frame
+
+          @raw_frame
         else
           log "frame_finished: #{@frame_finished.read_int}"
+          nil
         end
       end
     end
