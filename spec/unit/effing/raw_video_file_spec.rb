@@ -13,16 +13,16 @@ describe Effing::RawVideoFile do
   let(:pixel_format) { double 'pixel format' }
   let(:width) { 4444 }
   let(:height) { 5555 }
+  let(:frame) { double 'frame' }
+
+  let(:dest_picture) do
+    {
+      data: double('Picture Data', :[] => frame),
+      linesize: 123
+    }
+  end
 
   describe '#write' do
-    let(:dest_picture) do
-      {
-        data: double('Picture Data', :[] => frame),
-        linesize: 123
-      }
-    end
-
-    let(:frame) { double 'frame' }
     let(:data) { double 'video data' }
 
     before do
@@ -68,6 +68,32 @@ describe Effing::RawVideoFile do
       FFI::LibC.should_receive(:fclose).with(file)
 
       subject.close
+    end
+  end
+
+  describe '#init_destination_picture' do
+    context 'FFI::FFmpeg.av_image_alloc fails' do
+      it 'allocates a frame and AVPicture' do
+        FFI::FFmpeg.should_receive(:avcodec_alloc_frame).and_return dest_picture
+        FFI::FFmpeg::AVPicture.should_receive(:new).with(dest_picture).
+          and_return dest_picture
+        FFI::FFmpeg.stub(:av_image_alloc).and_return -1
+
+        expect {
+          subject.send(:init_destination_picture)
+        }.to raise_error RuntimeError
+      end
+    end
+
+    context 'FFI::FFmpeg.av_image_alloc succeeds' do
+      it 'allocates a frame and AVPicture' do
+        FFI::FFmpeg.should_receive(:avcodec_alloc_frame).and_return dest_picture
+        FFI::FFmpeg::AVPicture.should_receive(:new).with(dest_picture).
+          and_return dest_picture
+        FFI::FFmpeg.stub(:av_image_alloc).and_return 1
+
+        subject.send(:init_destination_picture).should == [dest_picture, 1]
+      end
     end
   end
 end
