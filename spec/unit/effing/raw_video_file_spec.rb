@@ -62,4 +62,12 @@ describe Effing::RawVideoFile do
       subject.write(data, 333)
     end
   end
+
+  describe '#close' do
+    it 'uses fclose() to close the file' do
+      FFI::LibC.should_receive(:fclose).with(file)
+
+      subject.close
+    end
+  end
 end
