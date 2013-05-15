@@ -40,6 +40,7 @@ module FFI
 
     attach_function :av_log_set_level, [AVLogLevel], :void
     attach_function :av_malloc, [:uint], :pointer
+    attach_function :av_mallocz, [:uint8], :pointer
     attach_function :av_free, [:pointer], :void
     attach_function :av_freep, [:pointer], :void
     attach_function :avutil_version, [], :uint
@@ -58,7 +59,6 @@ module FFI
       [:pointer, :int, :int, AVSampleFormat, :int],
       :int
     attach_function :av_sample_fmt_is_planar, [AVSampleFormat], :int
-    attach_function :av_mallocz, [:uint8], :pointer
 
     #--------------------------------------------------
     # libavformat
@@ -233,6 +233,7 @@ module FFI
       }
     end
 
+    # @return [Boolean] +true+ if libavutil's major version is less than 52.
     def libavutil_old_api?
       libavutil_version[:major] < 52
     end
@@ -255,6 +256,7 @@ module FFI
       }
     end
 
+    # @return [Boolean] +true+ if libavformat's major version is less than 55.
     def libavformat_old_api?
       libavformat_version[:major] < 55
     end
