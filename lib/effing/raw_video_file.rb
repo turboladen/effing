@@ -78,7 +78,7 @@ class Effing
         raise 'Could not allocate raw video buffer'
       end
 
-      return dest_picture, destination_buffer_size
+      [dest_picture, destination_buffer_size]
     end
   end
 end
