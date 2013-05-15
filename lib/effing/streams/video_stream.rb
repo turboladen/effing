@@ -4,11 +4,15 @@ require_relative '../frames/video_frame'
 
 class Effing
   module Streams
+
+    # Represents a video stream from within a container file.
     class VideoStream < BaseStream
       include LogSwitch::Mixin
 
       attr_reader :raw_frame, :width, :height, :pixel_format
 
+      # @param [FFI::FFmpeg::AVStream] av_stream
+      # @param [FFI::FFmpeg::AVFormatContext] av_format_context
       def initialize(av_stream, av_format_context)
         super(av_stream, av_format_context)
 
@@ -23,6 +27,9 @@ class Effing
         @raw_frame = Effing::Frames::VideoFrame.new(@width, @height, @pixel_format)
       end
 
+      # @param [FFI::FFmpeg::AVPacket] packet The packet/frame to decode.
+      # @return [Effing::Frames::VideoFrame,nil] Returns a VideoFrame if data
+      #   was read, otherwise returns +nil+.
       def decode_frame(packet)
         len = if FFI::FFmpeg.old_api?
           avcodec_decode_video(@av_codec_context, @raw_frame.av_frame,
