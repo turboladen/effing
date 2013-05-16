@@ -72,11 +72,13 @@ module FFI
               #:pts_wrap_reference,        :int64, # new!
               #:pts_wrap_behavior,         :int   #new
 
+      # @return [String]
       def to_s
-        '#<AVStream:0x%08x index=%d, id=%d, codec_type=:%s>' %
+        "#<#{self.class}:0x%016x index=%d, id=%d, codec_type=:%s>" %
             [ object_id, self[:index], self[:id], self[:codec][:codec_type] ]
       end
 
+      # @return [Hash]
       def to_hash
         hash = {}
 
@@ -96,6 +98,11 @@ module FFI
         hash
       end
 
+      # Allows for discarding types of frames.
+      #
+      # @param [Symbol,Fixnum] type The AVDISCARD value.  Can be the Symbol that
+      #   represents the +type+ (see {FFI::FFmpeg::AVDiscard}) or the Integer
+      #   that represents that type.
       def discard=(type)
         send(:[]=, :discard, type)
       end
