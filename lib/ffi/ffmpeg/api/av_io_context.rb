@@ -20,7 +20,7 @@ module FFI
         :max_packet_size, :int,
         :checksum,        :ulong,
         :checksum_ptr,    :pointer,
-        :udpate_checksum, :pointer,
+        :update_checksum, :pointer,
         :error,           :int,
         :read_pause,      :pointer,
         :read_seek,       :pointer,
