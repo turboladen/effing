@@ -15,8 +15,9 @@ module FFI
         self[:val] + self[:num] / self[:den]
       end
 
+      # @return [String]
       def to_s
-        "#<AVRational:0x%016x val=%d, num=%d, den=%d, %f>" %
+        '#<AVRational:0x%016x val=%d, num=%d, den=%d, %f>' %
             [object_id, self[:val], self[:num], self[:den], to_f]
       end
     end
