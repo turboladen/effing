@@ -57,6 +57,7 @@ module FFI
               :channels,                :int64,
               :pkt_size,                :int
 
+      # @return [Hash]
       def to_hash
         hash = {}
 
