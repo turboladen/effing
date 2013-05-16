@@ -36,7 +36,7 @@ describe FFI::FFmpeg::AVFrac do
 
   describe '#to_s' do
     specify {
-      subject.to_s.should match %r[#<AVRational:\w{18} val=0, num=0, den=0, NaN>]
+      subject.to_s.should match %r[#<FFI::FFmpeg::AVFrac:\w{18} val=0, num=0, den=0, NaN>]
     }
   end
 end
