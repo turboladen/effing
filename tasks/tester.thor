@@ -6,14 +6,15 @@ require './lib/effing'
 
 
 class Tester < Thor
-  desc "demux [FILE] [TYPE]", "Demuxes a [TYPE] stream from [FILE]"
+
+  desc 'demux [FILE] [TYPE]', 'Demuxes a [TYPE] stream from [FILE]'
   method_option :playback_method, type: :string, :default => 'codec'
   def demux(file_path, stream_type)
     Effing.log = false
     stream_type = stream_type.to_sym
 
     stream_reader = Effing::StreamReader.new(file_path, stream_type)
-    destination_file_name = "tester_demuxed_file"
+    destination_file_name = 'tester_demuxed_file'
     destination_file = FFI::LibC.fopen(destination_file_name, 'wb')
 
     play_back_codec = stream_reader.stream.av_stream[:codec][:codec][:name]
@@ -23,7 +24,7 @@ class Tester < Thor
     puts "Input format: #{input_format}"
 
     stream_reader.demux do |packet|
-      warn "Got null data packet" if packet[:data].null?
+      warn 'Got null data packet' if packet[:data].null?
 
       unless packet[:dts] >= 0
         FFI::LibC.fwrite(
@@ -43,7 +44,7 @@ class Tester < Thor
       "ffplay -f #{input_format} "
     end
 
-    cmd << "-loglevel debug "
+    cmd << '-loglevel debug '
     cmd << destination_file_name
     puts "Playing the output video file with the command:\n#{cmd}"
 
@@ -56,12 +57,12 @@ class Tester < Thor
     FileUtils.rm_rf(destination_file_name)
   end
 
-  desc "decode [FILE] [TYPE]", "Demuxes a [TYPE] stream from [FILE]"
+  desc 'decode [FILE] [TYPE]', 'Demuxes a [TYPE] stream from [FILE]'
   def decode(file_path, stream_type)
     Effing.log = true
     stream_type = stream_type.to_sym
     stream_reader = Effing::StreamReader.new(file_path, stream_type)
-    destination_file_name = "tester_decoded_file"
+    destination_file_name = 'tester_decoded_file'
 
     destination_file = if stream_type == :video
       Effing::RawVideoFile.new(destination_file_name,
@@ -77,7 +78,7 @@ class Tester < Thor
 
     if stream_type == :video
       stream_reader.decode do |frame|
-        warn "Got null data frame" if frame.av_frame[:data].to_a.empty?
+        warn 'Got null data frame' if frame.av_frame[:data].to_a.empty?
         destination_file.write(frame.av_frame[:data], frame.av_frame[:linesize])
       end
     elsif stream_type == :audio
@@ -89,20 +90,20 @@ class Tester < Thor
     destination_file.close
 
     if stream_type == :video
-      cmd = "ffplay -f rawvideo "
+      cmd = 'ffplay -f rawvideo '
       cmd << "-pixel_format #{stream_reader.stream.pixel_format} "
       cmd << "-video_size #{stream_reader.stream.width}x#{stream_reader.stream.height} "
     elsif stream_type == :audio
       cmd = "ffplay -f #{stream_reader.stream.format}le "
       cmd << "-ac #{stream_reader.stream.channels} "
       cmd << "-ar #{stream_reader.stream.sample_rate} "
-      cmd << "-showmode 2 "
+      cmd << '-showmode 2 '
     end
 
     cmd << "-t #{stream_reader.file_reader.duration} "
-    cmd << "-loglevel debug "
-    cmd << "-autoexit "
-    cmd << "  -i " << destination_file_name
+    cmd << '-loglevel debug '
+    cmd << '-autoexit '
+    cmd << '  -i ' << destination_file_name
     puts "Playing the output video file with the command:\n#{cmd}"
 
     system(cmd)
