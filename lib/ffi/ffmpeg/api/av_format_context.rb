@@ -57,7 +57,7 @@ module FFI
               #:skip_initial_bytes,  :uint,    # new!
               #:correct_ts_overflow, :uint,    # new!
               :packet_buffer,       AVPacketList.ptr,
-              :packet_buffet_end,   AVPacketList.ptr,
+              :packet_buffer_end,   AVPacketList.ptr,
               :data_offset,         :int64,
               :raw_packet_buffer,   AVPacketList.ptr,
               :raw_packet_buffer_end, AVPacketList.ptr,
