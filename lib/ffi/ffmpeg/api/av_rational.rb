@@ -4,20 +4,19 @@ module FFI
       layout  :num, :int,
               :den, :int
 
+      # @return [Float] +num+ / +den+.
       def to_f
         self[:num].to_f / self[:den]
       end
 
-      def to_float
-        to_f
-      end
-
+      # @return [Integer] +num+ / +den+.
       def to_i
         self[:num] / self[:den]
       end
 
+      # @return [String]
       def to_s
-        "#<AVRational:0x%016x num=%d, den=%d, %f>" %
+        "#<#{self.class}:0x%016x num=%d, den=%d, %f>" %
             [object_id, self[:num], self[:den], to_f]
       end
     end
