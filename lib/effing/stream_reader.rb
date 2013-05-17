@@ -48,14 +48,14 @@ class Effing
       log "stream_id type: #{stream_id.class}"
 
       stream = if stream_id.is_a? Symbol
-        @file_reader.streams.find do |stream|
-          log "stream type: '#{stream.type}'"
-          stream.type == stream_id
+        @file_reader.streams.find do |s|
+          log "stream type: '#{s.type}'"
+          s.type == stream_id
         end
       elsif stream_id.to_i
-        @file_reader.streams.find do |stream|
-          log "stream type: '#{stream.type}'"
-          stream.index == stream_id.to_i
+        @file_reader.streams.find do |s|
+          log "stream type: '#{s.type}'"
+          s.index == stream_id.to_i
         end
       #else
       #  abort "Don't know how to find stream using '#{stream_id}' (#{stream_id.class})"
