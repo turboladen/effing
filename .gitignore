@@ -22,3 +22,7 @@ effer*.gem
 .idea/
 atlassian-ide-plugin.xml
 projectFilesBackup/
+
+# Vagrant
+.vagrant
+
