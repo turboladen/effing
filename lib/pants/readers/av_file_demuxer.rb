@@ -67,7 +67,7 @@ class Pants
         elsif stream_id.is_a? Fixnum
           reader.streams.find { |stream| stream.index == stream_id }
         end
-        abort "No video stream found" unless @stream
+        abort 'No video stream found' unless @stream
 
         log "Stream type: #{@stream.type}"
         log "Stream index: #{@stream.index}"
