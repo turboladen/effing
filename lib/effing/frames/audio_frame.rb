@@ -1,3 +1,7 @@
+# Commenting out for initial release.  ffmpeg/libav version problems with
+# #av_samples_copy.
+
+=begin
 require_relative 'base_frame'
 
 
@@ -10,3 +14,4 @@ class Effing
     end
   end
 end
+=end

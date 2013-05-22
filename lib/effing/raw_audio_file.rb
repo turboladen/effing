@@ -1,3 +1,7 @@
+# Commenting out all for first release.  Ran into ffmpeg/libav version issues
+# with #av_samples_copy.
+
+=begin
 require_relative '../ffi/libc'
 require_relative '../ffi/ffmpeg'
 
@@ -85,3 +89,4 @@ class Effing
     end
   end
 end
+=end

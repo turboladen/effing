@@ -1,3 +1,4 @@
+=begin
 require_relative 'base_stream'
 require_relative '../frames/audio_frame'
 
@@ -54,3 +55,4 @@ class Effing
     end
   end
 end
+=end

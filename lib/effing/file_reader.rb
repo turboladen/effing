@@ -115,7 +115,8 @@ class Effing
           @streams << VideoStream.new(av_stream, @av_format_context)
         when :audio
           log 'Audio stream'
-          @streams << AudioStream.new(av_stream, @av_format_context)
+          #@streams << AudioStream.new(av_stream, @av_format_context)
+          warn 'Audio streams not yet supported.'
         else
           warn "Unsupported stream type: #{av_stream[:codec][:codec_type]}"
         end
