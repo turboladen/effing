@@ -1,5 +1,4 @@
 require 'eventmachine'
-require 'effing/base_reader'
 require 'effing/file_reader'
 
 
@@ -23,7 +22,7 @@ class Pants
       #   stream as it is inside the file.
       #
       # @param [EventMachine::Callback] main_callback The Callback that will get
-      #   called when #stopper is called.  #stopper is called when the while
+      #   called when #stopper is called.  #stopper is called when the
       #   file has been demuxed and all packets have been pushed to the channel.
       def initialize(file_path, stream_id, main_callback)
         @info = "#{file_path}:#{stream_id}"
