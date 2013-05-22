@@ -73,7 +73,7 @@ class Pants
         log "Stream index: #{@stream.index}"
         log "Stream codec id: #{@stream.codec_id}"
         log "Stream codec name: #{@stream.codec_name}"
-        log "Stream bit rate: #{@stream.av_stream.bit_rate}"
+        log "Stream bit rate: #{@stream.av_codec_context[:bit_rate]}"
         log "Stream time base: #{@stream.time_base}"
         log "Stream frame rate: #{@stream.frame_rate}"
       end
