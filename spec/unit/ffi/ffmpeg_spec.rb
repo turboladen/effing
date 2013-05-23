@@ -88,7 +88,7 @@ describe FFI::FFmpeg do
     it 'returns a Hash with :major, :minor, and :micro set' do
       hash = subject.libavutil_version
 
-      hash[:major].should >= 52
+      hash[:major].should >= 51
       hash[:minor].should >= 0
       hash[:micro].should >= 0
     end
@@ -98,7 +98,7 @@ describe FFI::FFmpeg do
     it 'returns a Hash with :major, :minor, and :micro set' do
       hash = subject.libavformat_version
 
-      hash[:major].should >= 54
+      hash[:major].should >= 53
       hash[:minor].should >= 0
       hash[:micro].should >= 0
     end
@@ -108,7 +108,7 @@ describe FFI::FFmpeg do
     it 'returns a Hash with :major, :minor, and :micro set' do
       hash = subject.libavcodec_version
 
-      hash[:major].should >= 54
+      hash[:major].should >= 53
       hash[:minor].should >= 0
       hash[:micro].should >= 0
     end
