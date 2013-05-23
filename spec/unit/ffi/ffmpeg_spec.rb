@@ -40,7 +40,11 @@ describe FFI::FFmpeg do
       specify { FFI::FFmpeg.avutil_version.should > 0 }
     end
 
-    specify { FFI::FFmpeg.should respond_to :av_samples_copy }
+    specify do
+      pending 'Implementing audio support...'
+      FFI::FFmpeg.should respond_to :av_samples_copy
+    end
+
     specify { FFI::FFmpeg.should respond_to :av_samples_get_buffer_size }
     specify { FFI::FFmpeg.should respond_to :av_sample_fmt_is_planar }
   end
@@ -49,7 +53,11 @@ describe FFI::FFmpeg do
     specify { FFI::FFmpeg.should respond_to :av_register_all }
     specify { FFI::FFmpeg.should respond_to :avformat_open_input }
     specify { FFI::FFmpeg.should respond_to :av_dump_format }
-    specify { FFI::FFmpeg.should respond_to :avformat_find_stream_info }
+    specify do
+      FFI::FFmpeg.should(respond_to(:av_find_stream_info)) ||
+        FFI::FFmpeg.should(respond_to(:avformat_find_stream_info))
+    end
+
     specify { FFI::FFmpeg.should respond_to :av_read_frame }
     specify { FFI::FFmpeg.should respond_to :av_seek_frame }
     specify { FFI::FFmpeg.should respond_to :av_find_default_stream_index }
